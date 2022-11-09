@@ -25,11 +25,15 @@ boolean CheckerDT_Node_isValid(Node_T oNNode) {
       return FALSE;
    }
 
-   
    oNParent = Node_getParent(oNNode);
+
+/*
+
+*/ 
+   
+   if(oNParent != NULL) {
    oPNPath = Node_getPath(oNNode);
    oPPPath = Node_getPath(oNParent);
-   if(oNParent != NULL) {
 
       /* Sample check: parent's path must be the longest possible
       proper prefix of the node's path */
