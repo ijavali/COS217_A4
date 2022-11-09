@@ -17,6 +17,7 @@ boolean CheckerDT_Node_isValid(Node_T oNNode) {
    Node_T oNParent;
    Path_T oPNPath;
    Path_T oPPPath;
+   size_t ulIndex;
 
    /* Sample check: a NULL pointer is not a valid node */
    if(oNNode == NULL) {
@@ -26,9 +27,9 @@ boolean CheckerDT_Node_isValid(Node_T oNNode) {
 
    
    oNParent = Node_getParent(oNNode);
+   oPNPath = Node_getPath(oNNode);
+   oPPPath = Node_getPath(oNParent);
    if(oNParent != NULL) {
-      oPNPath = Node_getPath(oNNode);
-      oPPPath = Node_getPath(oNParent);
 
       /* Sample check: parent's path must be the longest possible
       proper prefix of the node's path */
@@ -41,7 +42,7 @@ boolean CheckerDT_Node_isValid(Node_T oNNode) {
    
       /* Sample check: parent must be an ancestor of child*/
       if(Path_getSharedPrefixDepth(oPNPath,
-                                                   oPPPath) < Path_getDepth(OPPPath)) {
+                                                   oPPPath) < Path_getDepth(oPPPath)) {
             fprintf(stderr, "A parent node is not an ancestor of a child\n");
             return FALSE;
          }
@@ -53,7 +54,7 @@ boolean CheckerDT_Node_isValid(Node_T oNNode) {
          }
       
       /* Sample check: parent must not already have a child with this path */
-      if(Node_hasChild(oNParent, oPNPath, ONNode->ulIndex)) {
+      if(Node_hasChild(oNParent, oPNPath, &ulIndex)) {
          fprintf(stderr, "A parent node already has a child in the tree with an identical path\n");
             return FALSE;
       }
