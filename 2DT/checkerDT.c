@@ -17,6 +17,7 @@ boolean CheckerDT_Node_isValid(Node_T oNNode) {
    Node_T oNParent;
    Path_T oPNPath;
    Path_T oPPPath;
+   size_t ulIndex;
 
    /* Sample check: a NULL pointer is not a valid node */
    if(oNNode == NULL) {
@@ -24,20 +25,54 @@ boolean CheckerDT_Node_isValid(Node_T oNNode) {
       return FALSE;
    }
 
-   /* Sample check: parent's path must be the longest possible
-      proper prefix of the node's path */
    oNParent = Node_getParent(oNNode);
-   if(oNParent != NULL) {
-      oPNPath = Node_getPath(oNNode);
-      oPPPath = Node_getPath(oNParent);
 
+/*
+
+*/ 
+   
+   if(oNParent != NULL) {
+   oPNPath = Node_getPath(oNNode);
+   oPPPath = Node_getPath(oNParent);
+
+      /* Sample check: parent's path must be the longest possible
+      proper prefix of the node's path */
       if(Path_getSharedPrefixDepth(oPNPath, oPPPath) !=
          Path_getDepth(oPNPath) - 1) {
          fprintf(stderr, "P-C nodes don't have P-C paths: (%s) (%s)\n",
                  Path_getPathname(oPPPath), Path_getPathname(oPNPath));
          return FALSE;
       }
+   
+      /* Sample check: parent must be an ancestor of child*/
+      if(Path_getSharedPrefixDepth(oPNPath,
+                                                   oPPPath) < Path_getDepth(oPPPath)) {
+            fprintf(stderr, "A parent node is not an ancestor of a child\n");
+            return FALSE;
+         }
+
+      /* Sample check: parent must be exactly one level up from child */
+      if(Path_getDepth(oPNPath) != Path_getDepth(oPPPath) + 1) {
+         fprintf(stderr, "A node is not one level down from its parent\n");
+            return FALSE;
+         }
+      
+      /* Sample check: parent must not already have a child with this path */
+      if(Node_hasChild(oNParent, oPNPath, &ulIndex)) {
+         fprintf(stderr, "A parent node already has a child in the tree with an identical path\n");
+            return FALSE;
+      }
+         
    }
+   else
+   {
+      /* Sample check: if there is no parent, the current node must be a root */
+      if(Path_getDepth(oPNPath) != 1) {
+         fprintf(stderr, "There is only one node, which must be a root\n");
+            return FALSE;
+      }
+   }
+
 
    return TRUE;
 }
