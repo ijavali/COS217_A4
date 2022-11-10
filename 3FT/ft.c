@@ -146,12 +146,57 @@ int FT_stat(const char *pcPath, boolean *pbIsFile, size_t *pulSize) {
     }
     *pbIsFile = *(*oNFound->pbIsFile);
     if(*(*oNFound->pbIsFile)){
-        /* TODO: get the length of file's contents and put into pulSize. */
-        
+        *pulSize = *oNFound->ulLength;
     }
 
     return SUCCESS;
 }
+
+void *FT_getFileContents(const char *pcPath){
+    int iStatus;
+    Node_T oNFound = NULL;
+    assert(pcPath != NULL);
+    if(!FT_containsFile(pcPath)){
+        return NULL;
+    }
+    iStatus = FT_findNode(pcPath, &oNFound);
+    if(iStatus != SUCCESS){
+        return NULL;
+    }
+    if(*(*oNFound->pbIsFile)){
+        return *oNFound->value;
+    }
+    return NULL;
+}
+
+/*
+  Replaces current contents of the file with absolute path pcPath with
+  the parameter pvNewContents of size ulNewLength bytes.
+  Returns the old contents if successful. (Note: contents may be NULL.)
+  Returns NULL if unable to complete the request for any reason.
+*/
+void *FT_replaceFileContents(const char *pcPath, void *pvNewContents,
+                             size_t ulNewLength) {
+    int iStatus;
+    Node_T oNFound = NULL;
+    assert(pcPath != NULL);
+    if(!FT_containsFile(pcPath)){
+        return NULL;
+    }
+    iStatus = FT_findNode(pcPath, &oNFound);
+    if(iStatus != SUCCESS){
+        return NULL;
+    }
+    
+    if(*(*oNFound->pbIsFile)){
+        void* oldContent = *oNFound->value;
+        *oNFound->value = pvNewContents;
+        *oNFound->ulLength = ulNewLength;
+        return oldContent;
+    }
+    return NULL;
+}
+
 /*
   Traverses the FT to find a node with absolute path pcPath. Returns a
   int SUCCESS status and sets *poNResult to be the node, if found.
