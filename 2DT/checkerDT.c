@@ -11,14 +11,14 @@
 #include "dynarray.h"
 #include "path.h"
 
-size_t debug = 0;
+
 
 /* see checkerDT.h for specification */
 boolean CheckerDT_Node_isValid(Node_T oNNode) {
     Node_T oNParent;
     Path_T oPNPath;
     Path_T oPPPath;
-    size_t ulIndex, ulDepth;
+
 
     /* Sample check: a NULL pointer is not a valid node */
     if (oNNode == NULL) {
@@ -27,11 +27,9 @@ boolean CheckerDT_Node_isValid(Node_T oNNode) {
     }
 
     oNParent = Node_getParent(oNNode);
-
-    oPNPath = Node_getPath(oNNode);
     if (oNParent != NULL) {
+      oPNPath = Node_getPath(oNNode);
         oPPPath = Node_getPath(oNParent);
-        if(debug) fprintf(stderr, "HEREEE\n");
 
         /* Sample check: parent's path must be the longest possible
         proper prefix of the node's path */
@@ -120,15 +118,7 @@ boolean CheckerDT_isValid(boolean bIsInitialized, Node_T oNRoot,
             fprintf(stderr, "Not initialized, but count is not 0\n");
             return FALSE;
         }
-
-   /* Sample check on a top-level data structure invariant:
-      if the DT is not initialized, its count should be 0. */
-   if(!bIsInitialized)
-      if(ulCount != 0) {
-         fprintf(stderr, "Not initialized, but count is not 0\n");
-         return FALSE;
-      }
-   
+        
    /* Sample check on top-level data structure invariant:
       if the DT is initialized, its directory count should be 
       exactly the number of nodes in the directory*/
