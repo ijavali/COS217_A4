@@ -155,8 +155,9 @@ int Node_new(Path_T oPPath, Node_T oNParent, Node_T *poNResult) {
    }
 
    *poNResult = psNew;
-
+printf("ASDFASasdasaasdf\n");
    assert(oNParent == NULL || CheckerDT_Node_isValid(oNParent));
+   printf("ASDFAS\n");
    assert(CheckerDT_Node_isValid(*poNResult));
 
    return SUCCESS;

@@ -6,49 +6,52 @@
 #include <assert.h>
 #include <stdio.h>
 #include <string.h>
+
 #include "checkerDT.h"
 #include "dynarray.h"
 #include "path.h"
 
-
+size_t debug = 0;
 
 /* see checkerDT.h for specification */
 boolean CheckerDT_Node_isValid(Node_T oNNode) {
-   Node_T oNParent;
-   Path_T oPNPath;
-   Path_T oPPPath;
+    Node_T oNParent;
+    Path_T oPNPath;
+    Path_T oPPPath;
+    size_t ulIndex, ulDepth;
 
-   /* Sample check: a NULL pointer is not a valid node */
-   if(oNNode == NULL) {
-      fprintf(stderr, "A node is a NULL pointer\n");
-      return FALSE;
-   }
+    /* Sample check: a NULL pointer is not a valid node */
+    if (oNNode == NULL) {
+        fprintf(stderr, "A node is a NULL pointer\n");
+        return FALSE;
+    }
 
-   
-   oNParent = Node_getParent(oNNode);
-   if(oNParent != NULL) {
-      oPNPath = Node_getPath(oNNode);
-      oPPPath = Node_getPath(oNParent);
+    oNParent = Node_getParent(oNNode);
 
-      /* Sample check: parent's path must be the longest possible
-      proper prefix of the node's path */
-      if(Path_getSharedPrefixDepth(oPNPath, oPPPath) !=
-         Path_getDepth(oPNPath) - 1) {
-         fprintf(stderr, "P-C nodes don't have P-C paths: (%s) (%s)\n",
-                 Path_getPathname(oPPPath), Path_getPathname(oPNPath));
-         return FALSE;
-      }
-   
-      /* Sample check: parent must be an ancestor of child*/
-      if(Path_getSharedPrefixDepth(oPNPath,
-                                                   oPPPath) < Path_getDepth(OPPPath)) {
+    oPNPath = Node_getPath(oNNode);
+    if (oNParent != NULL) {
+        oPPPath = Node_getPath(oNParent);
+        if(debug) fprintf(stderr, "HEREEE\n");
+
+        /* Sample check: parent's path must be the longest possible
+        proper prefix of the node's path */
+        if (Path_getSharedPrefixDepth(oPNPath, oPPPath) !=
+            Path_getDepth(oPNPath) - 1) {
+            fprintf(stderr, "P-C nodes don't have P-C paths: (%s) (%s)\n",
+                    Path_getPathname(oPPPath), Path_getPathname(oPNPath));
+            return FALSE;
+        }
+
+        /* Sample check: parent must be an ancestor of child*/
+        if (Path_getSharedPrefixDepth(oPNPath, oPPPath) <
+            Path_getDepth(oPPPath)) {
             fprintf(stderr, "A parent node is not an ancestor of a child\n");
             return FALSE;
-         }
+        }
 
-      /* Sample check: parent must be exactly one level up from child */
-      if(Path_getDepth(oPNPath) != Path_getDepth(oPPPath) + 1) {
-         fprintf(stderr, "A node is not one level down from its parent\n");
+        /* Sample check: parent must be exactly one level up from child */
+        if (Path_getDepth(oPNPath) != Path_getDepth(oPPPath) + 1) {
+            fprintf(stderr, "A node is not one level down from its parent\n");
             return FALSE;
          }
       
@@ -60,11 +63,10 @@ boolean CheckerDT_Node_isValid(Node_T oNNode) {
       if(Path_getDepth(oPNPath) != 1) {
          fprintf(stderr, "There is only one node, which must be a root\n");
             return FALSE;
-      }
-   }
+        }
+    }
 
-
-   return TRUE;
+    return TRUE;
 }
 
 /*
@@ -74,7 +76,7 @@ boolean CheckerDT_Node_isValid(Node_T oNNode) {
 
    You may want to change this function's return type or
    parameter list to facilitate constructing your checks.
-   If you do, you should update this function comment.
+   If you do, you should update this function comment.   
 */
 static boolean CheckerDT_treeCheck(Node_T oNNode) {
    size_t ulIndex;
@@ -111,6 +113,13 @@ static boolean CheckerDT_treeCheck(Node_T oNNode) {
 /* see checkerDT.h for specification */
 boolean CheckerDT_isValid(boolean bIsInitialized, Node_T oNRoot,
                           size_t ulCount) {
+    /* Sample check on a top-level data structure invariant:
+       if the DT is not initialized, its count should be 0. */
+    if (!bIsInitialized)
+        if (ulCount != 0) {
+            fprintf(stderr, "Not initialized, but count is not 0\n");
+            return FALSE;
+        }
 
    /* Sample check on a top-level data structure invariant:
       if the DT is not initialized, its count should be 0. */
