@@ -77,6 +77,7 @@ static int CheckerDT_treeCheck(Node_T oNNode) {
    int ulCount;
    int lengthOfSubtree;
 
+   ulCount = 0;
    if(oNNode!= NULL) {
 
       /* Sample check on each node: node must be valid */
