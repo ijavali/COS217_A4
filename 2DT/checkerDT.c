@@ -68,22 +68,20 @@ boolean CheckerDT_Node_isValid(Node_T oNNode) {
 
 /*
    Performs a pre-order traversal of the tree rooted at oNNode.
-   Returns FALSE if a broken invariant is found and
-   returns TRUE otherwise.
+   Returns -1 if a broken invariant is found and
+   returns the number of valid children from a node otherwise.
 
-   You may want to change this function's return type or
-   parameter list to facilitate constructing your checks.
-   If you do, you should update this function comment.   
 */
-static boolean CheckerDT_treeCheck(Node_T oNNode) {
+static size_t CheckerDT_treeCheck(Node_T oNNode) {
    size_t ulIndex;
+   size_t ulCount;
 
    if(oNNode!= NULL) {
 
       /* Sample check on each node: node must be valid */
       /* If not, pass that failure back up immediately */
       if(!CheckerDT_Node_isValid(oNNode))
-         return FALSE;
+         return -1;
 
       /* Recur on every child of oNNode */
       for(ulIndex = 0; ulIndex < Node_getNumChildren(oNNode); ulIndex++)
@@ -94,16 +92,24 @@ static boolean CheckerDT_treeCheck(Node_T oNNode) {
          
          if(iStatus != SUCCESS) {
             fprintf(stderr, "getNumChildren claims more children than getChild returns\n");
-            return FALSE;
+            return -1;
          }
 
+         
          /* if recurring down one subtree results in a failed check
             farther down, passes the failure back up immediately */
-         if(!CheckerDT_treeCheck(oNChild))
-            return FALSE;
+         size_t lengthOfSubtree = CheckerDT_treeCheck(oNChild)
+         if(lengthOfSubtree == -1)
+         {
+            return -1;
+         }
+         else
+         {
+            ulCount += lengthOfSubtree;
+         }
       }
    }
-   return TRUE;
+   return ulCount;
 }
 
 /* see checkerDT.h for specification */
@@ -123,17 +129,14 @@ boolean CheckerDT_isValid(boolean bIsInitialized, Node_T oNRoot,
             return FALSE;
         }
     }
-        
-    
-
-   if(ulCount != Node_getNumChildren(oNRoot))
+   
+   /*The size of the tree should be equal to the actual number of valid nodes in the tree*/
+   size_t check = CheckerDT_treeCheck(oNRoot);
+   if (check != ulCount)
    {
-      fprintf(stderr, "Number of children does not match the size of the tree\n");
+      fprintf(stderr, "Size of tree is not equal to the number of valid nodes in the tree\n");
       return FALSE;
    }
-
-
-
-   /* Now checks invariants recursively at each node from the root. */
-   return CheckerDT_treeCheck(oNRoot);
+   
+   return TRUE;
 }
