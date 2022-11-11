@@ -112,6 +112,7 @@ boolean CheckerDT_isValid(boolean bIsInitialized, Node_T oNRoot,
     /* Sample check on a top-level data structure invariant:
        if the DT is not initialized, its count should be 0. */
     if (!bIsInitialized)
+    {
          if (oNRoot)
          {
             fprintf(stderr, "Not initialized, but root still exists\n");
@@ -121,8 +122,9 @@ boolean CheckerDT_isValid(boolean bIsInitialized, Node_T oNRoot,
             fprintf(stderr, "Not initialized, but count is not 0\n");
             return FALSE;
         }
+    }
         
-   /*
+   
    if(oNRoot)
    {
       if(ulCount != Node_getNumChildren(oNRoot))
@@ -130,7 +132,7 @@ boolean CheckerDT_isValid(boolean bIsInitialized, Node_T oNRoot,
          fprintf(stderr, "Number of children does not match the size of the tree\n");
          return FALSE;
       }
-   }*/
+   }
 
    /* Now checks invariants recursively at each node from the root. */
    return CheckerDT_treeCheck(oNRoot);
