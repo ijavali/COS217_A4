@@ -27,8 +27,9 @@ boolean CheckerDT_Node_isValid(Node_T oNNode) {
     }
 
     oNParent = Node_getParent(oNNode);
+    oPNPath = Node_getPath(oNNode);
     if (oNParent != NULL) {
-      oPNPath = Node_getPath(oNNode);
+      
         oPPPath = Node_getPath(oNParent);
 
         /* Sample check: parent's path must be the longest possible
