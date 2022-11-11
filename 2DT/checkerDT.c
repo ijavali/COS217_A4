@@ -123,9 +123,9 @@ boolean CheckerDT_isValid(boolean bIsInitialized, Node_T oNRoot,
         }
         
    /* Sample check on top-level data structure invariant:
-      if the DT is initialized, its directory count should be 
+      if the root exists, its directory count should be 
       exactly the number of nodes in the directory*/
-   if(bIsInitialized)
+   if(oNRoot)
    {
       if(ulCount != Node_getNumChildren(oNRoot))
       {
