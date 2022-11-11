@@ -112,7 +112,7 @@ int FT_rmDir(const char *pcPath) {
 
    assert(pcPath != NULL);
 
-   iStatus = DT_findNode(pcPath, &oNFound);
+   iStatus = FT_findNode(pcPath, &oNFound);
 
    if(iStatus != SUCCESS)
        return iStatus;
@@ -126,7 +126,7 @@ int FT_rmDir(const char *pcPath) {
 }
 
 int FT_init(void) {
-    assert(CheckerDT_isValid(bIsInitialized, oNRoot, ulCount));
+    assert(CheckerFT_isValid(bIsInitialized, oNRoot, ulCount));
 
     if (bIsInitialized) return INITIALIZATION_ERROR;
 
@@ -134,7 +134,7 @@ int FT_init(void) {
     oNRoot = NULL;
     ulCount = 0;
 
-    assert(CheckerDT_isValid(bIsInitialized, oNRoot, ulCount));
+    assert(CheckerFT_isValid(bIsInitialized, oNRoot, ulCount));
     return SUCCESS;
 }
 
@@ -229,7 +229,7 @@ int FT_stat(const char *pcPath, boolean *pbIsFile, size_t *pulSize) {
         pcStart++;
     }
 
-    /* Copied from dtGood.c, DT_traversePath */
+    /* Copied from dtGood.c, FT_traversePath */
     /* Path_prefix can return NO_SUCH_PATH and MEMORY_ERROR */
     iStatus = Path_prefix(oPPath, 1, &oPPrefix);
     if(iStatus != SUCCESS) {
@@ -303,7 +303,7 @@ void *FT_replaceFileContents(const char *pcPath, void *pvNewContents,
   Traverses the FT to find a node with absolute path pcPath. Returns a
   int SUCCESS status and sets *poNResult to be the node, if found.
   Otherwise, sets *poNResult to NULL and returns with status:
-  * INITIALIZATION_ERROR if the DT is not in an initialized state
+  * INITIALIZATION_ERROR if the FT is not in an initialized state
   * BAD_PATH if pcPath does not represent a well-formatted path
   * CONFLICTING_PATH if the root's path is not a prefix of pcPath
   * NO_SUCH_PATH if no node with pcPath exists in the hierarchy
@@ -356,7 +356,7 @@ static int FT_findNode(const char *pcPath, Node_T *poNResult) {
 
 
 /*
-  Traverses the DT starting at the root as far as possible towards
+  Traverses the FT starting at the root as far as possible towards
   absolute path oPPath. If able to traverse, returns an int SUCCESS
   status and sets *poNFurthest to the furthest node reached (which may
   be only a prefix of oPPath, or even NULL if the root is NULL).
@@ -364,7 +364,7 @@ static int FT_findNode(const char *pcPath, Node_T *poNResult) {
   * CONFLICTING_PATH if the root's path is not a prefix of oPPath
   * MEMORY_ERROR if memory could not be allocated to complete request
 */
-static int DT_traversePath(Path_T oPPath, Node_T *poNFurthest) {
+static int FT_traversePath(Path_T oPPath, Node_T *poNFurthest) {
    int iStatus;
    Path_T oPPrefix = NULL;
    Node_T oNCurr;
@@ -518,7 +518,7 @@ int FT_insertDir(const char *pcPath) {
    }
 
    Path_free(oPPath);
-   /* update DT state variables to reflect insertion */
+   /* update FT state variables to reflect insertion */
    if(oNRoot == NULL)
       oNRoot = oNFirstNew;
    ulCount += ulNewNodes;
@@ -607,7 +607,7 @@ int FT_insertFile(const char *pcPath, void *pvContents, size_t ulLength) {
    }
 
    Path_free(oPPath);
-   /* update DT state variables to reflect insertion */
+   /* update FT state variables to reflect insertion */
    if(oNRoot == NULL)
       oNRoot = oNFirstNew;
    ulCount += ulNewNodes;
