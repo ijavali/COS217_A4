@@ -16,8 +16,10 @@ struct node {
    Path_T oPPath;
    /* this node's parent */
    Node_T oNParent;
-   /* the object containing links to this node's children */
-   DynArray_T oDChildren;
+   /* the object containing links to this node's children that are files */
+   DynArray_T fDChildren;
+   /* the object containing links to this node's children that are directories */
+   DynArray_T dDChildren;
    /* the value associated with a node if it is a file*/
    void* value;
    /* a boolean indicating if a node is a file or not*/
@@ -36,11 +38,18 @@ static int Node_addChild(Node_T oNParent, Node_T oNChild,
                          size_t ulIndex) {
    assert(oNParent != NULL);
    assert(oNChild != NULL);
-
-   if(DynArray_addAt(oNParent->oDChildren, ulIndex, oNChild))
-      return SUCCESS;
-   else
-      return MEMORY_ERROR;
+   if(oNChild->isFile){
+      if(DynArray_addAt(oNParent->fDChildren, ulIndex, oNChild))
+         return SUCCESS;
+      else
+         return MEMORY_ERROR;
+   }else{
+      if(DynArray_addAt(oNParent->dDChildren, ulIndex, oNChild))
+         return SUCCESS;
+      else
+         return MEMORY_ERROR;
+   }
+   
 }
 
 /*
@@ -141,8 +150,16 @@ int Node_new(Path_T oPPath, Node_T oNParent, Node_T *poNResult, boolean isFile, 
    psNew->oNParent = oNParent;
 
    /* initialize the new node */
-   psNew->oDChildren = DynArray_new(0);
-   if(psNew->oDChildren == NULL) {
+   psNew->fDChildren = DynArray_new(0);
+   if(psNew->fDChildren == NULL) {
+      Path_free(psNew->oPPath);
+      free(psNew);
+      *poNResult = NULL;
+      return MEMORY_ERROR;
+   }
+   /* initialize the new node */
+   psNew->dDChildren = DynArray_new(0);
+   if(psNew->dDChildren == NULL) {
       Path_free(psNew->oPPath);
       free(psNew);
       *poNResult = NULL;
@@ -190,22 +207,36 @@ size_t Node_free(Node_T oNNode) {
    assert(oNNode != NULL);
    assert(CheckerFT_Node_isValid(oNNode));
 
-   /* remove from parent's list */
-   if(oNNode->oNParent != NULL) {
-      if(DynArray_bsearch(
-            oNNode->oNParent->oDChildren,
-            oNNode, &ulIndex,
-            (int (*)(const void *, const void *)) Node_compare)
-        )
-         (void) DynArray_removeAt(oNNode->oNParent->oDChildren,
-                                  ulIndex);
+   /* remove this file from parent's list */
+   if(*oNNode->isFile){
+      if(oNNode->oNParent != NULL) {
+         if(DynArray_bsearch(
+               oNNode->oNParent->fDChildren,
+               oNNode, &ulIndex,
+               (int (*)(const void *, const void *)) Node_compare)
+         )
+            (void) DynArray_removeAt(oNNode->oNParent->fDChildren,
+                                 ulIndex);
+      }
+   }else{
+      /* remove this directory from parent's list */
+      if(oNNode->oNParent != NULL) {
+         if(DynArray_bsearch(
+               oNNode->oNParent->dDChildren,
+               oNNode, &ulIndex,
+               (int (*)(const void *, const void *)) Node_compare)
+         )
+            (void) DynArray_removeAt(oNNode->oNParent->dDChildren,
+                                 ulIndex);
+      }
+      /* recursively remove children */
+      while(DynArray_getLength(oNNode->oDChildren) != 0) {
+         ulCount += Node_free(DynArray_removeAt(oNNode->dDChildren, 0));
+      }
    }
-
-   /* recursively remove children */
-   while(DynArray_getLength(oNNode->oDChildren) != 0) {
-      ulCount += Node_free(DynArray_removeAt(oNNode->oDChildren, 0));
-   }
-   DynArray_free(oNNode->oDChildren);
+   
+   DynArray_free(oNNode->fDChildren);
+   DynArray_free(oNNode->dDChildren);
 
    /* remove path */
    Path_free(oNNode->oPPath);
@@ -238,10 +269,10 @@ boolean Node_hasChild(Node_T oNParent, Path_T oPPath,
 size_t Node_getNumChildren(Node_T oNParent) {
    assert(oNParent != NULL);
 
-   return DynArray_getLength(oNParent->oDChildren);
+   return DynArray_getLength(oNParent->fDChildren) + DynArray_getLength(oNParent->dDChildren);
 }
 
-int  Node_getChild(Node_T oNParent, size_t ulChildID,
+int Node_getChild(Node_T oNParent, size_t ulChildID,
                    Node_T *poNResult) {
 
    assert(oNParent != NULL);
