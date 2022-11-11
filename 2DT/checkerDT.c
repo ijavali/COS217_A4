@@ -122,9 +122,7 @@ boolean CheckerDT_isValid(boolean bIsInitialized, Node_T oNRoot,
             return FALSE;
         }
         
-   /* Sample check on top-level data structure invariant:
-      if the root exists, its directory count should be 
-      exactly the number of nodes in the directory*/
+   /*
    if(oNRoot)
    {
       if(ulCount != Node_getNumChildren(oNRoot))
@@ -132,7 +130,7 @@ boolean CheckerDT_isValid(boolean bIsInitialized, Node_T oNRoot,
          fprintf(stderr, "Number of children does not match the size of the tree\n");
          return FALSE;
       }
-   }
+   }*/
 
    /* Now checks invariants recursively at each node from the root. */
    return CheckerDT_treeCheck(oNRoot);
