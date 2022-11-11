@@ -22,6 +22,8 @@ struct node {
    void* value;
    /* a boolean indicating if a node is a file or not*/
    boolean* isFile; 
+   /* size of file contents in bytes*/
+   size_t ulLength;
 };
 
 
@@ -67,7 +69,7 @@ static int Node_compareString(const Node_T oNFirst,
                  or oNParent is NULL but oPPath is not of depth 1
   * ALREADY_IN_TREE if oNParent already has a child with this path
 */
-int Node_new(Path_T oPPath, Node_T oNParent, Node_T *poNResult, boolean isFile, void* value) {
+int Node_new(Path_T oPPath, Node_T oNParent, Node_T *poNResult, boolean isFile, void* value, size_t contentLength) {
    struct node *psNew;
    Path_T oPParentPath = NULL;
    Path_T oPNewPath = NULL;
@@ -158,21 +160,25 @@ int Node_new(Path_T oPPath, Node_T oNParent, Node_T *poNResult, boolean isFile, 
       }
    }
     
-    /* If node is a file, set value equal to parameter value, otherwise NULL*/
+    /* If node is a file, set value equal to parameter value, 
+    and set file content length equal to the parameter contentLength,
+    otherwise set value equal to NULL and ulLength to 0.*/
     psNew->isFile = malloc(sizeof(boolean));
     *(psNew->isFile) = isFile;
     if(isFile)
     {
+        psNew->ulLength = contentLength;
         psNew->value = value;
     }
     else
     {
+        psNew->ulLength = 0;
         psNew->value = NULL;
     }
    *poNResult = psNew;
 
-   assert(oNParent == NULL || CheckerDT_Node_isValid(oNParent));
-   assert(CheckerDT_Node_isValid(*poNResult));
+   assert(oNParent == NULL || CheckerFT_Node_isValid(oNParent));
+   assert(CheckerFT_Node_isValid(*poNResult));
 
    return SUCCESS;
 }
@@ -182,7 +188,7 @@ size_t Node_free(Node_T oNNode) {
    size_t ulCount = 0;
 
    assert(oNNode != NULL);
-   assert(CheckerDT_Node_isValid(oNNode));
+   assert(CheckerFT_Node_isValid(oNNode));
 
    /* remove from parent's list */
    if(oNNode->oNParent != NULL) {
@@ -205,6 +211,7 @@ size_t Node_free(Node_T oNNode) {
    Path_free(oNNode->oPPath);
 
    /* finally, free the struct node */
+   free(oNNode->isFile);
    free(oNNode);
    ulCount++;
    return ulCount;
@@ -274,4 +281,10 @@ char *Node_toString(Node_T oNNode) {
       return NULL;
    else
       return strcpy(copyPath, Path_getPathname(Node_getPath(oNNode)));
+}
+
+void *Node_getValue(Node_T oNNode) {
+    assert(oNNode != NULL);
+    
+    return oNNode->value;
 }

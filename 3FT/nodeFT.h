@@ -16,7 +16,10 @@ typedef struct node *Node_T;
 
 /*
   Creates a new node in the Directory Tree, with path oPPath and
-  parent oNParent. Returns an int SUCCESS status and sets *poNResult
+  parent oNParent. If the node is a file (i.e. isFile is true), 
+  set the node's value equal to value and the node's content length
+  equal to ulLength.
+  Returns an int SUCCESS status and sets *poNResult
   to be the new node if successful. Otherwise, sets *poNResult to NULL
   and returns status:
   * MEMORY_ERROR if memory could not be allocated to complete request
@@ -26,7 +29,7 @@ typedef struct node *Node_T;
                  or oNParent is NULL but oPPath is not of depth 1
   * ALREADY_IN_TREE if oNParent already has a child with this path
 */
-int Node_new(Path_T oPPath, Node_T oNParent, Node_T *poNResult);
+int Node_new(Path_T oPPath, Node_T oNParent, Node_T *poNResult, boolean isFile, void* value, size_t ulLength);
 
 /*
   Destroys and frees all memory allocated for the subtree rooted at
@@ -84,4 +87,8 @@ int Node_compare(Node_T oNFirst, Node_T oNSecond);
 */
 char *Node_toString(Node_T oNNode);
 
+/*
+  Returns value of oNNode if oNNode is a file, otherwise returns NULL.
+*/
+void *Node_getValue(Node_T oNNode);
 #endif
