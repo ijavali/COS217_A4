@@ -155,9 +155,8 @@ int Node_new(Path_T oPPath, Node_T oNParent, Node_T *poNResult) {
    }
 
    *poNResult = psNew;
-printf("ASDFASasdasaasdf\n");
+
    assert(oNParent == NULL || CheckerDT_Node_isValid(oNParent));
-   printf("ASDFAS\n");
    assert(CheckerDT_Node_isValid(*poNResult));
 
    return SUCCESS;
@@ -183,7 +182,7 @@ size_t Node_free(Node_T oNNode) {
 
    /* recursively remove children */
    while(DynArray_getLength(oNNode->oDChildren) != 0) {
-      ulCount += Node_free(DynArray_removeAt(oNNode->oDChildren, 0));
+      ulCount += Node_free(DynArray_get(oNNode->oDChildren, 0));
    }
    DynArray_free(oNNode->oDChildren);
 
