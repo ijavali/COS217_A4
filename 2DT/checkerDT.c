@@ -6,7 +6,6 @@
 #include <assert.h>
 #include <stdio.h>
 #include <string.h>
-
 #include "checkerDT.h"
 #include "dynarray.h"
 #include "path.h"
@@ -29,7 +28,6 @@ boolean CheckerDT_Node_isValid(Node_T oNNode) {
     oNParent = Node_getParent(oNNode);
     oPNPath = Node_getPath(oNNode);
     if (oNParent != NULL) {
-      
         oPPPath = Node_getPath(oNParent);
 
         /* Sample check: parent's path must be the longest possible
@@ -91,7 +89,6 @@ static boolean CheckerDT_treeCheck(Node_T oNNode) {
       for(ulIndex = 0; ulIndex < Node_getNumChildren(oNNode); ulIndex++)
       {
          Node_T oNChild = NULL;
-         
          int iStatus = Node_getChild(oNNode, ulIndex, &oNChild);
          
          
@@ -114,7 +111,7 @@ boolean CheckerDT_isValid(boolean bIsInitialized, Node_T oNRoot,
                           size_t ulCount) {
     /* Sample check on a top-level data structure invariant:
        if the DT is not initialized, its count should be 0. */
-    if (!bIsInitialized)
+    if (!bIsInitialized || !oNRoot)
         if (ulCount != 0) {
             fprintf(stderr, "Not initialized, but count is not 0\n");
             return FALSE;
