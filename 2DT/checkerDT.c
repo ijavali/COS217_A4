@@ -74,7 +74,7 @@ boolean CheckerDT_Node_isValid(Node_T oNNode) {
 */
 static int CheckerDT_treeCheck(Node_T oNNode) {
    size_t ulIndex;
-   int ulCount;
+   int ulCount = 0;
    int lengthOfSubtree;
 
 
