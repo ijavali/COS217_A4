@@ -21,6 +21,13 @@ int main(void) {
      * contains should return FALSE
      * toString should return NULL
   */
+  assert(DT_init() == SUCCESS);
+  assert(DT_contains("") == FALSE);
+  DT_insert("1root");
+  assert((temp = DT_toString()) != NULL);
+  assert(!strcmp(temp,""));
+  printf("%s", temp);
+
   assert(DT_insert("1root/2child/3grandchild") == INITIALIZATION_ERROR);
   assert(DT_contains("1root/2child/3grandchild") == FALSE);
   assert(DT_rm("1root/2child/3grandchild") == INITIALIZATION_ERROR);
