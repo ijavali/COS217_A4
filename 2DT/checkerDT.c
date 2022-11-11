@@ -24,8 +24,6 @@ boolean CheckerDT_Node_isValid(Node_T oNNode) {
       return FALSE;
    }
 
-   /*hi*/
-
    
    oNParent = Node_getParent(oNNode);
    if(oNParent != NULL) {
