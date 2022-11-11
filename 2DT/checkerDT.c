@@ -77,9 +77,9 @@ static int CheckerDT_treeCheck(Node_T oNNode) {
    int ulCount;
    int lengthOfSubtree;
 
-   ulCount = 0;
-   if(oNNode!= NULL) {
 
+   if(oNNode!= NULL) {
+      ulCount = 1;
       /* Sample check on each node: node must be valid */
       /* If not, pass that failure back up immediately */
       if(!CheckerDT_Node_isValid(oNNode))
@@ -91,13 +91,12 @@ static int CheckerDT_treeCheck(Node_T oNNode) {
          Node_T oNChild = NULL;
          int iStatus = Node_getChild(oNNode, ulIndex, &oNChild);
          
-         
          if(iStatus != SUCCESS) {
             fprintf(stderr, "getNumChildren claims more children than getChild returns\n");
             return -1;
          }
 
-         ulCount += 1;
+   
          /* if recurring down one subtree results in a failed check
             farther down, passes the failure back up immediately */
          lengthOfSubtree = CheckerDT_treeCheck(oNChild);
