@@ -97,7 +97,7 @@ static int CheckerDT_treeCheck(Node_T oNNode) {
             return -1;
          }
 
-         
+         ulCount += 1;
          /* if recurring down one subtree results in a failed check
             farther down, passes the failure back up immediately */
          lengthOfSubtree = CheckerDT_treeCheck(oNChild);
