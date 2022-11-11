@@ -72,9 +72,9 @@ boolean CheckerDT_Node_isValid(Node_T oNNode) {
    returns the number of valid children from a node otherwise.
 
 */
-static size_t CheckerDT_treeCheck(Node_T oNNode) {
+static int CheckerDT_treeCheck(Node_T oNNode) {
    size_t ulIndex;
-   size_t ulCount;
+   int ulCount;
 
    if(oNNode!= NULL) {
 
@@ -98,7 +98,7 @@ static size_t CheckerDT_treeCheck(Node_T oNNode) {
          
          /* if recurring down one subtree results in a failed check
             farther down, passes the failure back up immediately */
-         size_t lengthOfSubtree = CheckerDT_treeCheck(oNChild);
+         int lengthOfSubtree = CheckerDT_treeCheck(oNChild);
          if(lengthOfSubtree == -1)
          {
             return -1;
@@ -131,8 +131,8 @@ boolean CheckerDT_isValid(boolean bIsInitialized, Node_T oNRoot,
     }
    
    /*The size of the tree should be equal to the actual number of valid nodes in the tree*/
-   size_t check = CheckerDT_treeCheck(oNRoot);
-   if (check != ulCount)
+   int check = CheckerDT_treeCheck(oNRoot);
+   if (check != int(ulCount))
    {
       fprintf(stderr, "Size of tree is not equal to the number of valid nodes in the tree\n");
       return FALSE;
