@@ -111,7 +111,12 @@ boolean CheckerDT_isValid(boolean bIsInitialized, Node_T oNRoot,
                           size_t ulCount) {
     /* Sample check on a top-level data structure invariant:
        if the DT is not initialized, its count should be 0. */
-    if (!bIsInitialized || !oNRoot)
+    if (!bIsInitialized)
+         if (oNRoot)
+         {
+            fprintf(stderr, "Not initialized, but root still exists\n");
+            return FALSE;
+         }
         if (ulCount != 0) {
             fprintf(stderr, "Not initialized, but count is not 0\n");
             return FALSE;
