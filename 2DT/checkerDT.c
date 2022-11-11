@@ -24,6 +24,8 @@ boolean CheckerDT_Node_isValid(Node_T oNNode) {
       return FALSE;
    }
 
+   /*hi*/
+
    
    oNParent = Node_getParent(oNNode);
    if(oNParent != NULL) {
@@ -52,11 +54,6 @@ boolean CheckerDT_Node_isValid(Node_T oNNode) {
             return FALSE;
          }
       
-      /* Sample check: parent must not already have a child with this path */
-      if(Node_hasChild(oNParent, oPNPath, ONNode->ulIndex)) {
-         fprintf(stderr, "A parent node already has a child in the tree with an identical path\n");
-            return FALSE;
-      }
          
    }
    else
@@ -95,26 +92,14 @@ static boolean CheckerDT_treeCheck(Node_T oNNode) {
       for(ulIndex = 0; ulIndex < Node_getNumChildren(oNNode); ulIndex++)
       {
          Node_T oNChild = NULL;
-         /*Node_T prev = NULL;*/
+         
          int iStatus = Node_getChild(oNNode, ulIndex, &oNChild);
          
-         /* if (ulIndex > 0)
-         {
-            int Dummy = Node_getChild(oNNode, u1Index - 1, &prev);
-         }*/
+         
          if(iStatus != SUCCESS) {
             fprintf(stderr, "getNumChildren claims more children than getChild returns\n");
             return FALSE;
          }
-         /*
-         if (ulIndex > 0)
-         {
-            if(Node_toString(oNChild) < Node_toString(prev))
-            {
-               fprintf(stderr, "A child node is not in the correct lexographical order");
-               return FALSE;
-            }
-         }*/
 
          /* if recurring down one subtree results in a failed check
             farther down, passes the failure back up immediately */
@@ -140,20 +125,14 @@ boolean CheckerDT_isValid(boolean bIsInitialized, Node_T oNRoot,
    /* Sample check on top-level data structure invariant:
       if the DT is initialized, its directory count should be 
       exactly the number of nodes in the directory*/
-   
-
    if(bIsInitialized)
    {
       if(ulCount != Node_getNumChildren(oNRoot))
       {
-         fprintf(stderr, "Not initialized, but count is not 0\n");
+         fprintf(stderr, "Number of children does not match the size of the tree\n");
          return FALSE;
       }
    }
-
-   /* Sample check on top-level data structure invariant:
-      if the DT is initialized, each child under a parent should be
-      in lexigraphical order */
 
    /* Now checks invariants recursively at each node from the root. */
    return CheckerDT_treeCheck(oNRoot);
