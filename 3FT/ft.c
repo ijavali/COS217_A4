@@ -397,7 +397,7 @@ int FT_insertDir(const char *pcPath) {
       return iStatus;
 
    /* find the closest ancestor of oPPath already in the tree */
-   iStatus= FT_traversePath(oPPath, &oNCurr);
+   iStatus= FT_traverse(oPPath, &oNCurr);
    if(iStatus != SUCCESS)
    {
       Path_free(oPPath);
@@ -424,49 +424,27 @@ int FT_insertDir(const char *pcPath) {
          return ALREADY_IN_TREE;
       }
    }
-
-   /* starting at oNCurr, build rest of the path one level at a time */
-   while(ulIndex <= ulDepth) {
-      Path_T oPPrefix = NULL;
-      Node_T oNNewNode = NULL;
-
-      /* generate a Path_T for this level */
-      iStatus = Path_prefix(oPPath, ulIndex, &oPPrefix);
-      if(iStatus != SUCCESS) {
-         Path_free(oPPath);
-         if(oNFirstNew != NULL)
-            (void) Node_free(oNFirstNew);
-         return iStatus;
-      }
-
-      /* insert the new node for this level */
-      iStatus = Node_new(oPPrefix, oNCurr, &oNNewNode, TRUE, NULL, 0);
-      if(iStatus != SUCCESS) {
-         Path_free(oPPath);
-         Path_free(oPPrefix);
-         if(oNFirstNew != NULL)
-            (void) Node_free(oNFirstNew);
-         return iStatus;
-      }
-
-      /* set up for next level */
-      Path_free(oPPrefix);
-      oNCurr = oNNewNode;
-      ulNewNodes++;
-      if(oNFirstNew == NULL)
-         oNFirstNew = oNCurr;
-      ulIndex++;
+   
+   /* parent must not already have child with this path */
+   if(Node_hasChild(oNParent, oPPath, &ulIndex)) {
+      Path_free(oPPath);
+      free(psNew);
+      *poNResult = NULL;
+      return ALREADY_IN_TREE;
    }
-
-   Path_free(oPPath);
-   /* update FT state variables to reflect insertion */
-   if(oNRoot == NULL)
-      oNRoot = oNFirstNew;
-   ulCount += ulNewNodes;
-
-   return SUCCESS;
 }
 
+/*
+   Inserts a new directory into the FT with absolute path pcPath.
+   Returns SUCCESS if the new directory is inserted successfully.
+   Otherwise, returns:
+   * INITIALIZATION_ERROR if the FT is not in an initialized state
+   * BAD_PATH if pcPath does not represent a well-formatted path
+   * CONFLICTING_PATH if the root exists but is not a prefix of pcPath
+   * NOT_A_DIRECTORY if a proper prefix of pcPath exists as a file
+   * ALREADY_IN_TREE if pcPath is already in the FT (as dir or file)
+   * MEMORY_ERROR if memory could not be allocated to complete request
+*/
 int FT_insertFile(const char *pcPath, void *pvContents, size_t ulLength) {
    int iStatus;
    Path_T oPPath = NULL;

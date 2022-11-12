@@ -53,10 +53,15 @@ boolean CheckerDT_Node_isValid(Node_T oNNode) {
             return FALSE;
          }
       
-      
+      /* parent must not already have child with this path */
+       /* if(Node_hasChild(oNParent, oPNPath, &ulIndex)) {
+            fprintf(stderr, "A parent already has a child with this path\n");
+            return FALSE;
+         }*/
 
+      
       /* all children under a parent must be in lexigraphical order*/
-         for(ulIndex = 0; ulIndex < Node_getNumChildren(oNParent) - 1; ulIndex++)
+        /* for(ulIndex = 0; ulIndex < Node_getNumChildren(oNParent) - 1; ulIndex++)
          {
             Node_T prev = NULL;
             Node_T next = NULL;
@@ -75,7 +80,7 @@ boolean CheckerDT_Node_isValid(Node_T oNNode) {
                fprintf(stderr, "The children of a parent are not in lexigraphical order\n");
                return FALSE;
             }
-         }
+         }*/
             
    }
    else
