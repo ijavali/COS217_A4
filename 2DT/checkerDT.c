@@ -17,6 +17,7 @@ boolean CheckerDT_Node_isValid(Node_T oNNode) {
     Node_T oNParent;
     Path_T oPNPath;
     Path_T oPPPath;
+    size_t ulIndex;
 
 
     /* Sample check: a NULL pointer is not a valid node */
@@ -52,7 +53,12 @@ boolean CheckerDT_Node_isValid(Node_T oNNode) {
             return FALSE;
          }
       
-         
+         /* parent must not already have child with this path */
+         if(Node_hasChild(oNParent, oPNPath, &ulIndex)) {
+            fprintf(stderr, "A parent already has a child with this path\n");
+            return FALSE;
+         }
+            
    }
    else
    {
