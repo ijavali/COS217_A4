@@ -60,8 +60,8 @@ boolean CheckerDT_Node_isValid(Node_T oNNode) {
             
             Node_T prev = NULL;
             Node_T next = NULL;
-            int iStatus = Node_getChild(oNParent, ulIndex, &prev);
-            int iStatus = Node_getChild(oNParent, ulIndex + 1, &next);
+            int iStatusPrev = Node_getChild(oNParent, ulIndex, &prev);
+            int iStatusNext = Node_getChild(oNParent, ulIndex + 1, &next);
             /* all children under a parent must be in lexigraphical order*/
             if (Node_compare(prev, next) > 0)
             {
@@ -69,7 +69,7 @@ boolean CheckerDT_Node_isValid(Node_T oNNode) {
                return FALSE;
             }
             /* parent has a duplicate child node */
-            if (Node_compare(prev, next) = 0)
+            if (Node_compare(prev, next) == 0)
             {
                fprintf(stderr, "A parent already has a child with this path\n");
                return FALSE;
