@@ -51,35 +51,6 @@ static void FT_strcatAccumulate(Node_T oNNode, char *pcAcc) {
    }
 }
 
-char *FT_toString(void) {
-   DynArray_T nodes;
-   size_t totalStrlen = 1;
-   char *result = NULL;
-
-   if(!bIsInitialized)
-      return NULL;
-
-   nodes = DynArray_new(ulCount);
-   (void) FT_preOrderTraversal(oNRoot, nodes, 0);
-
-   DynArray_map(nodes, (void (*)(void *, void*)) FT_strlenAccumulate,
-                (void*) &totalStrlen);
-
-   result = malloc(totalStrlen);
-   if(result == NULL) {
-      DynArray_free(nodes);
-      return NULL;
-   }
-   *result = '\0';
-
-   DynArray_map(nodes, (void (*)(void *, void*)) FT_strcatAccumulate,
-                (void *) result);
-
-   DynArray_free(nodes);
-
-   return result;
-}
-
 /*
   Performs a pre-order traversal of the tree rooted at n,
   inserting each payload to DynArray_T d beginning at index i.
@@ -111,6 +82,105 @@ static size_t FT_preOrderTraversal(Node_T n, DynArray_T d, size_t i) {
    }
    return i;
 }
+
+
+
+/*
+  Traverses the FT to find a node with absolute path pcPath. Returns a
+  int SUCCESS status and sets *poNResult to be the node, if found.
+  Otherwise, sets *poNResult to NULL and returns with status:
+  * INITIALIZATION_ERROR if the FT is not in an initialized state
+  * BAD_PATH if pcPath does not represent a well-formatted path
+  * CONFLICTING_PATH if the root's path is not a prefix of pcPath
+  * NO_SUCH_PATH if no node with pcPath exists in the hierarchy
+  * MEMORY_ERROR if memory could not be allocated to complete request
+ */
+
+static int FT_findNode(const char *pcPath, Node_T *poNResult, boolean isFile) {
+   Path_T oPPath = NULL;
+   Node_T oNFound = NULL;
+   int iStatus;
+
+   assert(pcPath != NULL);
+   assert(poNResult != NULL);
+
+   if(!bIsInitialized) {
+      *poNResult = NULL;
+      return INITIALIZATION_ERROR;
+   }
+
+   iStatus = Path_new(pcPath, &oPPath);
+   if(iStatus != SUCCESS) {
+      *poNResult = NULL;
+      return iStatus;
+   }
+
+   iStatus = FT_traversePath(oPPath, &oNFound);
+   if(iStatus != SUCCESS)
+   {
+      Path_free(oPPath);
+      *poNResult = NULL;
+      return iStatus;
+   }
+
+   if(oNFound == NULL) {
+      Path_free(oPPath);
+      *poNResult = NULL;
+      return NO_SUCH_PATH;
+   }
+
+   if(Path_comparePath(Node_getPath(oNFound), oPPath) != 0) {
+      Path_free(oPPath);
+      *poNResult = NULL;
+      return NO_SUCH_PATH;
+   }
+
+   if(isFile && !(*(*oNFound->isFile))){
+      Path_free(oPPath);
+      *poNResult = NULL;
+      return NOT_A_FILE;
+   }
+
+   if(!isFile && *(*oNFound->isFile)) {
+      Path_free(oPPath);
+      *poNResult = NULL;
+      return NOT_A_DIRECTORY;
+   }
+
+   Path_free(oPPath);
+   *poNResult = oNFound;
+   return SUCCESS;
+}
+
+char *FT_toString(void) {
+   DynArray_T nodes;
+   size_t totalStrlen = 1;
+   char *result = NULL;
+
+   if(!bIsInitialized)
+      return NULL;
+
+   nodes = DynArray_new(ulCount);
+   (void) FT_preOrderTraversal(oNRoot, nodes, 0);
+
+   DynArray_map(nodes, (void (*)(void *, void*)) FT_strlenAccumulate,
+                (void*) &totalStrlen);
+
+   result = malloc(totalStrlen);
+   if(result == NULL) {
+      DynArray_free(nodes);
+      return NULL;
+   }
+   *result = '\0';
+
+   DynArray_map(nodes, (void (*)(void *, void*)) FT_strcatAccumulate,
+                (void *) result);
+
+   DynArray_free(nodes);
+
+   return result;
+}
+
 
 
 int FT_rmDir(const char *pcPath) {
@@ -324,72 +394,6 @@ void *FT_replaceFileContents(const char *pcPath, void *pvNewContents,
     return NULL;
 }
 
-/*
-  Traverses the FT to find a node with absolute path pcPath. Returns a
-  int SUCCESS status and sets *poNResult to be the node, if found.
-  Otherwise, sets *poNResult to NULL and returns with status:
-  * INITIALIZATION_ERROR if the FT is not in an initialized state
-  * BAD_PATH if pcPath does not represent a well-formatted path
-  * CONFLICTING_PATH if the root's path is not a prefix of pcPath
-  * NO_SUCH_PATH if no node with pcPath exists in the hierarchy
-  * MEMORY_ERROR if memory could not be allocated to complete request
- */
-
-static int FT_findNode(const char *pcPath, Node_T *poNResult, boolean isFile) {
-   Path_T oPPath = NULL;
-   Node_T oNFound = NULL;
-   int iStatus;
-
-   assert(pcPath != NULL);
-   assert(poNResult != NULL);
-
-   if(!bIsInitialized) {
-      *poNResult = NULL;
-      return INITIALIZATION_ERROR;
-   }
-
-   iStatus = Path_new(pcPath, &oPPath);
-   if(iStatus != SUCCESS) {
-      *poNResult = NULL;
-      return iStatus;
-   }
-
-   iStatus = FT_traversePath(oPPath, &oNFound);
-   if(iStatus != SUCCESS)
-   {
-      Path_free(oPPath);
-      *poNResult = NULL;
-      return iStatus;
-   }
-
-   if(oNFound == NULL) {
-      Path_free(oPPath);
-      *poNResult = NULL;
-      return NO_SUCH_PATH;
-   }
-
-   if(Path_comparePath(Node_getPath(oNFound), oPPath) != 0) {
-      Path_free(oPPath);
-      *poNResult = NULL;
-      return NO_SUCH_PATH;
-   }
-
-   if(isFile && !(*(*oNFound->isFile))){
-      Path_free(oPPath);
-      *poNResult = NULL;
-      return NOT_A_FILE;
-   }
-
-   if(!isFile && *(*oNFound->isFile)) {
-      Path_free(oPPath);
-      *poNResult = NULL;
-      return NOT_A_DIRECTORY;
-   }
-
-   Path_free(oPPath);
-   *poNResult = oNFound;
-   return SUCCESS;
-}
 
 
 /*
