@@ -54,7 +54,7 @@ boolean CheckerDT_Node_isValid(Node_T oNNode) {
          }
 
          
-         /*looping through the node's siblings*/
+          /*looping through the node's siblings*/
         for(ulIndex = 1; ulIndex < Node_getNumChildren(oNParent); ulIndex++)
          {
             
@@ -62,8 +62,8 @@ boolean CheckerDT_Node_isValid(Node_T oNNode) {
             Node_T next = NULL;
             Path_T prevPath;
             Path_T nextPath;
-            int iStatusPrev = Node_getChild(oNParent, ulIndex - 1, &prev);
-            int iStatusNext = Node_getChild(oNParent, ulIndex, &next);
+            (void) Node_getChild(oNParent, ulIndex - 1, &prev);
+            (void) Node_getChild(oNParent, ulIndex, &next);
             prevPath = Node_getPath(prev);
             nextPath = Node_getPath(next);
             /* all children under a parent must be in lexigraphical order*/
@@ -78,8 +78,7 @@ boolean CheckerDT_Node_isValid(Node_T oNNode) {
                fprintf(stderr, "A parent already has a child with this path\n");
                return FALSE;
             }
-         }
-            
+         }  
    }
    else
    {
