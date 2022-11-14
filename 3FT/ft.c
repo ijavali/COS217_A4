@@ -403,66 +403,7 @@ static int FT_findNode(const char *pcPath, Node_T *poNResult, boolean isFile) {
   * MEMORY_ERROR if memory could not be allocated to complete request
 */
 static int FT_traversePath(Path_T oPPath, Node_T *poNFurthest) {
-   int iStatus;
-   Path_T oPPrefix = NULL;
-   Node_T oNCurr;
-   Node_T oNChild = NULL;
-   size_t ulDepth;
-   size_t i;
-   size_t ulChildID;
-
-   assert(oPPath != NULL);
-   assert(poNFurthest != NULL);
-
-   /* root is NULL -> won't find anything */
-   if(oNRoot == NULL) {
-      *poNFurthest = NULL;
-      return SUCCESS;
-   }
-
-   iStatus = Path_prefix(oPPath, 1, &oPPrefix);
-   if(iStatus != SUCCESS) {
-      *poNFurthest = NULL;
-      return iStatus;
-   }
-
-   if(Path_comparePath(Node_getPath(oNRoot), oPPrefix)) {
-      Path_free(oPPrefix);
-      *poNFurthest = NULL;
-      return CONFLICTING_PATH;
-   }
-   Path_free(oPPrefix);
-   oPPrefix = NULL;
-
-   oNCurr = oNRoot;
-   ulDepth = Path_getDepth(oPPath);
-   for(i = 2; i <= ulDepth; i++) {
-      iStatus = Path_prefix(oPPath, i, &oPPrefix);
-      if(iStatus != SUCCESS) {
-         *poNFurthest = NULL;
-         return iStatus;
-      }
-      if(Node_hasChild(oNCurr, oPPrefix, &ulChildID)) {
-         /* go to that child and continue with next prefix */
-         Path_free(oPPrefix);
-         oPPrefix = NULL;
-         iStatus = Node_getChild(oNCurr, ulChildID, &oNChild);
-         if(iStatus != SUCCESS) {
-            *poNFurthest = NULL;
-            return iStatus;
-         }
-         oNCurr = oNChild;
-      }
-      else {
-         /* oNCurr doesn't have child with path oPPrefix:
-            this is as far as we can go */
-         break;
-      }
-   }
-
-   Path_free(oPPrefix);
-   *poNFurthest = oNCurr;
-   return SUCCESS;
+   
 }
 
 boolean FT_containsDir(const char *pcPath) {
@@ -504,6 +445,7 @@ int FT_insertDir(const char *pcPath) {
       return iStatus;
 
    /* find the closest ancestor of oPPath already in the tree */
+
    iStatus = FT_traversePath(oPPath, &oNCurr);
    if(iStatus != SUCCESS)
    {
@@ -563,17 +505,21 @@ int FT_insertDir(const char *pcPath) {
       if(oNFirstNew == NULL)
          oNFirstNew = oNCurr;
       ulIndex++;
+
    }
-
-   Path_free(oPPath);
-   /* update FT state variables to reflect insertion */
-   if(oNRoot == NULL)
-      oNRoot = oNFirstNew;
-   ulCount += ulNewNodes;
-
-   return SUCCESS;
 }
 
+/*
+   Inserts a new directory into the FT with absolute path pcPath.
+   Returns SUCCESS if the new directory is inserted successfully.
+   Otherwise, returns:
+   * INITIALIZATION_ERROR if the FT is not in an initialized state
+   * BAD_PATH if pcPath does not represent a well-formatted path
+   * CONFLICTING_PATH if the root exists but is not a prefix of pcPath
+   * NOT_A_DIRECTORY if a proper prefix of pcPath exists as a file
+   * ALREADY_IN_TREE if pcPath is already in the FT (as dir or file)
+   * MEMORY_ERROR if memory could not be allocated to complete request
+*/
 int FT_insertFile(const char *pcPath, void *pvContents, size_t ulLength) {
    int iStatus;
    Path_T oPPath = NULL;
