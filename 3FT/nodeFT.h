@@ -50,11 +50,14 @@ Path_T Node_getPath(Node_T oNNode);
   such a child, stores in *pulChildID the identifier that such a
   child _would_ have if inserted.
 */
-boolean Node_hasChild(Node_T oNParent, Path_T oPPath,
+boolean Node_hasChild(Node_T oNParent, Path_T oPPath, boolean isFile,
                          size_t *pulChildID);
 
-/* Returns the number of children that oNParent has. */
-size_t Node_getNumChildren(Node_T oNParent);
+/* Returns the number of file children that oNParent has. */
+size_t Node_getNumFileChildren(Node_T oNParent);
+
+/* Returns the number of directory children that oNParent has. */
+size_t Node_getNumDirChildren(Node_T oNParent);
 
 /*
   Returns an int SUCCESS status and sets *poNResult to be the child
@@ -62,7 +65,7 @@ size_t Node_getNumChildren(Node_T oNParent);
   Otherwise, sets *poNResult to NULL and returns status:
   * NO_SUCH_PATH if ulChildID is not a valid child for oNParent
 */
-int Node_getChild(Node_T oNParent, size_t ulChildID,
+int Node_getChild(Node_T oNParent, size_t ulChildID, boolean isFile,
                   Node_T *poNResult);
 
 /*

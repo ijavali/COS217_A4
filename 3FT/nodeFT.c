@@ -266,11 +266,6 @@ boolean Node_hasChild(Node_T oNParent, Path_T oPPath, boolean isFile,
                (int (*)(const void*,const void*)) Node_compareString);
 }
 
-size_t Node_getNumChildren(Node_T oNParent) {
-   assert(oNParent != NULL);
-
-   return DynArray_getLength(oNParent->fDChildren) + DynArray_getLength(oNParent->dDChildren);
-}
 size_t Node_getNumFileChildren(Node_T oNParent) {
    assert(oNParent != NULL);
 
