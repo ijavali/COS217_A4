@@ -63,16 +63,24 @@ char *FT_toString(void) {
 */
 static size_t FT_preOrderTraversal(Node_T n, DynArray_T d, size_t i) {
    size_t c;
+   size_t numFiles = 0;
 
    assert(d != NULL);
 
    if(n != NULL) {
       (void) DynArray_set(d, i, n);
       i++;
-      for(c = 0; c < Node_getNumChildren(n); c++) {
+      for(c = 0; c < Node_getNumFileChildren(n); c++) {
          int iStatus;
          Node_T oNChild = NULL;
-         iStatus = Node_getChild(n,c, &oNChild);
+         iStatus = Node_getChild(n, c, TRUE, &oNChild);
+         assert(iStatus == SUCCESS);
+         i = FT_preOrderTraversal(oNChild, d, i);
+      }
+      for(c = 0; c < Node_getNumDirChildren(n); c++) {
+         int iStatus;
+         Node_T oNChild = NULL;
+         iStatus = Node_getChild(n, c, FALSE, &oNChild);
          assert(iStatus == SUCCESS);
          i = FT_preOrderTraversal(oNChild, d, i);
       }
@@ -146,7 +154,6 @@ int FT_rmFile(const char *pcPath) {
    return SUCCESS;
 }
 int FT_init(void) {
-    assert(CheckerFT_isValid(bIsInitialized, oNRoot, ulCount));
 
     if (bIsInitialized) return INITIALIZATION_ERROR;
 
@@ -154,7 +161,6 @@ int FT_init(void) {
     oNRoot = NULL;
     ulCount = 0;
 
-    assert(CheckerFT_isValid(bIsInitialized, oNRoot, ulCount));
     return SUCCESS;
 }
 
