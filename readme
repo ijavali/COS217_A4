@@ -134,12 +134,13 @@ specified in Step 2.5?
 
 The usage of global variables in dtGood is not effective encapsulation in modular coding, 
 since those global variables are accessed throughout multiple methods within dtGood.
-While functional, DT_traversePath and DT_insert are cumbersome. For example, DT_insert 
+While functional, DT_traversePath and DT_insert are cumbersome and bloated. For example, DT_insert 
 could be rewritten such that just a single traversal is used to create the new path 
 to the new node (i.e. building each depth level is not necessary). 
 
 The code succeeds in that it is consistent - each function is named with Node or
-DT as a prefix, and each function name is abundantly representative of what it does.
+DT as a prefix, and each function name is abundantly representative of what it does. 
+Exceptions are BDT_strlenAccumulate and BDT_strcatAccumulate, which were named vaguely.
 Furthermore, the distribution of resource management between the client and dtGood
 is effective because dtGood allocates and frees the string representation
 of the tree as well as internal node/path creation/destruction,
