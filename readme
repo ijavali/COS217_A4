@@ -121,17 +121,18 @@ the error manifests itself or is "noticed" by the client.
 ---------------------------------------------------------------
          ./bdtBad2        BDT_freeSubtree
 ---------------------------------------------------------------
-         ./bdtBad3        BDT_hasChild
+         ./bdtBad3        BDT_traversePath
 ---------------------------------------------------------------
          ./bdtBad4        BDT_strlenAccumulate
 ---------------------------------------------------------------
-         ./bdtBad5        BDT_toString
+         ./bdtBad5        BDT_rm
 ===============================================================
 
 ------------------------------------------------------------------------
 What are your critiques of the given DT implementations, as
 specified in Step 2.5?
 
+<<<<<<< HEAD
 The usage of global variables in dtGood is not effective encapsulation in modular coding, 
 since those global variables are accessed throughout multiple methods within dtGood.
 While functional, DT_traversePath and DT_insert are cumbersome and bloated. For example, DT_insert 
@@ -160,5 +161,8 @@ which all require using a method involving a singular, individual node. This
 is a good thing because errors in, for example, nodeDT won't amplify as much in DT. 
 It is also easier to maintain, because mistakes between files can be traced back
 to just a few cross-module method calls.
+=======
+
+>>>>>>> 9426a14f54365e79d32f9ce80113dc468fd242a8
 
 ------------------------------------------------------------------------
