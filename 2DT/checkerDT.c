@@ -10,8 +10,6 @@
 #include "dynarray.h"
 #include "path.h"
 
-
-
 /* see checkerDT.h for specification */
 boolean CheckerDT_Node_isValid(Node_T oNNode) {
     Node_T oNParent;
@@ -156,6 +154,7 @@ boolean CheckerDT_isValid(boolean bIsInitialized, Node_T oNRoot,
             fprintf(stderr, "Not initialized, but count is not 0\n");
             return FALSE;
         }
+        
     }
    
    /*The size of the tree should be equal to the actual number of valid nodes in the tree*/
