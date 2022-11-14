@@ -25,7 +25,31 @@ static Node_T oNRoot;
 /* 3. a counter of the number of nodes in the hierarchy */
 static size_t ulCount;
 
-/*ALL of this is copied from dtGood.c*/
+/*
+  Alternate version of strlen that uses pulAcc as an in-out parameter
+  to accumulate a string length, rather than returning the length of
+  oNNode's path, and also always adds one addition byte to the sum.
+*/
+static void FT_strlenAccumulate(Node_T oNNode, size_t *pulAcc) {
+   assert(pulAcc != NULL);
+
+   if(oNNode != NULL)
+      *pulAcc += (Path_getStrLength(Node_getPath(oNNode)) + 1);
+}
+
+/*
+  Alternate version of strcat that inverts the typical argument
+  order, appending oNNode's path onto pcAcc, and also always adds one
+  newline at the end of the concatenated string.
+*/
+static void FT_strcatAccumulate(Node_T oNNode, char *pcAcc) {
+   assert(pcAcc != NULL);
+
+   if(oNNode != NULL) {
+      strcat(pcAcc, Path_getPathname(Node_getPath(oNNode)));
+      strcat(pcAcc, "\n");
+   }
+}
 
 char *FT_toString(void) {
    DynArray_T nodes;
@@ -88,31 +112,6 @@ static size_t FT_preOrderTraversal(Node_T n, DynArray_T d, size_t i) {
    return i;
 }
 
-/*
-  Alternate version of strlen that uses pulAcc as an in-out parameter
-  to accumulate a string length, rather than returning the length of
-  oNNode's path, and also always adds one addition byte to the sum.
-*/
-static void FT_strlenAccumulate(Node_T oNNode, size_t *pulAcc) {
-   assert(pulAcc != NULL);
-
-   if(oNNode != NULL)
-      *pulAcc += (Path_getStrLength(Node_getPath(oNNode)) + 1);
-}
-
-/*
-  Alternate version of strcat that inverts the typical argument
-  order, appending oNNode's path onto pcAcc, and also always adds one
-  newline at the end of the concatenated string.
-*/
-static void FT_strcatAccumulate(Node_T oNNode, char *pcAcc) {
-   assert(pcAcc != NULL);
-
-   if(oNNode != NULL) {
-      strcat(pcAcc, Path_getPathname(Node_getPath(oNNode)));
-      strcat(pcAcc, "\n");
-   }
-}
 
 int FT_rmDir(const char *pcPath) {
    int iStatus;
