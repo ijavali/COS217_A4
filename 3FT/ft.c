@@ -412,7 +412,7 @@ int FT_stat(const char *pcPath, boolean *pbIsFile, size_t *pulSize) {
         return iStatus;
     }
     *pbIsFile = *(*oNFound->isFile);
-    if(*(*oNFound->pbIsFile)){
+    if(*(*oNFound->isFile)){
         *pulSize = *oNFound->ulLength;
     }
 
@@ -430,7 +430,7 @@ void *FT_getFileContents(const char *pcPath){
     if(iStatus != SUCCESS){
         return NULL;
     }
-    if(*(*oNFound->pbIsFile)){
+    if(*(*oNFound->isFile)){
         return *oNFound->value;
     }
     return NULL;
@@ -455,7 +455,7 @@ void *FT_replaceFileContents(const char *pcPath, void *pvNewContents,
         return NULL;
     }
     
-    if(*(*oNFound->pbIsFile)){
+    if(*(*oNFound->isFile)){
         void* oldContent = *oNFound->value;
         *oNFound->value = pvNewContents;
         *oNFound->ulLength = ulNewLength;
