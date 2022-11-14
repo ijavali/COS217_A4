@@ -397,7 +397,7 @@ int FT_stat(const char *pcPath, boolean *pbIsFile, size_t *pulSize) {
 
     /* Copied from dtGood.c, FT_traversePath */
     /* Path_prefix can return NO_SUCH_PATH and MEMORY_ERROR */
-    iStatus = Path_prefix(oPPath, 1, &oPPrefix);
+    iStatus = Path_prefix(pcPath, 1, &oPPrefix);
     if(iStatus != SUCCESS) {
         return iStatus;
     }
@@ -406,7 +406,6 @@ int FT_stat(const char *pcPath, boolean *pbIsFile, size_t *pulSize) {
         return CONFLICTING_PATH;
     }
     
-    /* -------- */
 
     iStatus = FT_findNode(pcPath, &oNFound, *isFile);
     if(iStatus != SUCCESS){
