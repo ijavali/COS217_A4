@@ -1,6 +1,6 @@
 /*--------------------------------------------------------------------*/
 /* nodeDT.c                                                           */
-/* Author: Ishaan Javali, Jack Zhang, and credits to Christopher Moretti                                        */
+/* Author: Ishaan Javali, Jack Zhang                                  */
 /*--------------------------------------------------------------------*/
 
 #include <stdlib.h>
@@ -87,7 +87,6 @@ int Node_new(Path_T oPPath, Node_T oNParent, Node_T *poNResult, boolean isFile, 
    int iStatus;
 
    assert(oPPath != NULL);
-   assert(oNParent == NULL || CheckerFT_Node_isValid(oNParent));
 
    /* allocate space for a new node */
    psNew = malloc(sizeof(struct node));
@@ -194,9 +193,6 @@ int Node_new(Path_T oPPath, Node_T oNParent, Node_T *poNResult, boolean isFile, 
     }
    *poNResult = psNew;
 
-   assert(oNParent == NULL || CheckerFT_Node_isValid(oNParent));
-   assert(CheckerFT_Node_isValid(*poNResult));
-
    return SUCCESS;
 }
 
@@ -205,7 +201,6 @@ size_t Node_free(Node_T oNNode) {
    size_t ulCount = 0;
 
    assert(oNNode != NULL);
-   assert(CheckerFT_Node_isValid(oNNode));
 
    /* remove this file from parent's list */
    if(*oNNode->isFile){
