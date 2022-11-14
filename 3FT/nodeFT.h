@@ -53,8 +53,11 @@ Path_T Node_getPath(Node_T oNNode);
 boolean Node_hasChild(Node_T oNParent, Path_T oPPath,
                          size_t *pulChildID);
 
-/* Returns the number of children that oNParent has. */
-size_t Node_getNumChildren(Node_T oNParent);
+/* Returns the number of file children that oNParent has. */
+size_t Node_getNumFileChildren(Node_T oNParent);
+
+/* Returns the number of directory children that oNParent has. */
+size_t Node_getNumDirChildren(Node_T oNParent);
 
 /*
   Returns an int SUCCESS status and sets *poNResult to be the child
