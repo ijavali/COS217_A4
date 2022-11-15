@@ -132,7 +132,6 @@ static int FT_traversePath(Path_T oPPath, boolean isFile, Node_T *poNFurthest) {
 
    Path_free(oPPrefix);
    *poNFurthest = oNCurr;
-   printf(" %d-- %s \n", Node_isFile(*poNFurthest), 
    Path_getPathname(Node_getPath(*poNFurthest)));
    return SUCCESS;
 }
