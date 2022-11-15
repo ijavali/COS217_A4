@@ -199,6 +199,8 @@ int Node_new(Path_T oPPath, Node_T oNParent, Node_T *poNResult, boolean isFile, 
 
 boolean Node_isFile(Node_T oNNode){
    assert(oNNode != NULL);
+   printf(" %d \n", *(oNNode->isFile));
+   printf("   %d \n", (oNNode->isFile));
    return *(oNNode->isFile);
 }
 size_t Node_getUlLength(Node_T oNNode){

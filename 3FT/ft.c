@@ -133,6 +133,8 @@ static int FT_traversePath(Path_T oPPath, boolean isFile, Node_T *poNFurthest) {
 
    Path_free(oPPrefix);
    *poNFurthest = oNCurr;
+   printf(" %d-- %s \n", Node_isFile(*poNFurthest), 
+   Path_getPathname(Node_getPath(*poNFurthest)));
    return SUCCESS;
 }
 /*
@@ -323,17 +325,14 @@ int FT_init(void) {
   * CONFLICTING_PATH if the root's path is not a prefix of pcPath
   * NO_SUCH_PATH if absolute path pcPath does not exist in the FT
   * MEMORY_ERROR if memory could not be allocated to complete request
-
   When returning SUCCESS,
   if path is a directory: sets *pbIsFile to FALSE, *pulSize unchanged
   if path is a file: sets *pbIsFile to TRUE, and
                      sets *pulSize to the length of file's contents
-
   When returning another status, *pbIsFile and *pulSize are unchanged.
 */
 
 int FT_stat(const char *pcPath, boolean *pbIsFile, size_t *pulSize) {
-    Path_T oPPrefix = NULL;
     int iStatus;
     Node_T oNFound = NULL;
     DynArray_T oDSubstrings;
@@ -607,15 +606,18 @@ int FT_insertFile(const char *pcPath, void *pvContents, size_t ulLength) {
 
    /* find the closest ancestor of oPPath already in the tree */
    iStatus= FT_traversePath(oPPath, TRUE, &oNCurr);
-   /* if(oNCurr == NULL && iStatus == SUCCESS){
-
-   } */
    if(iStatus != SUCCESS)
    {
       Path_free(oPPath);
       return iStatus;
    }
 
+   /*oNCurr is at the root*/
+   if(oNCurr == NULL && ulCount ==0)
+   {
+      Path_free(oPPath);
+      return CONFLICTING_PATH;
+   }
    /* no ancestor node found, so if root is not NULL,
       pcPath isn't underneath root. */
    if(oNCurr == NULL && oNRoot != NULL) {
@@ -652,7 +654,10 @@ int FT_insertFile(const char *pcPath, void *pvContents, size_t ulLength) {
       }
 
       /* insert the new node for this level */
-      iStatus = Node_new(oPPrefix, oNCurr, &oNNewNode, TRUE, pvContents, ulLength);
+      if(ulIndex < ulDepth) /* We have to insert the directories first */
+         iStatus = Node_new(oPPrefix, oNCurr, &oNNewNode, FALSE, pvContents, ulLength);
+      else
+         iStatus = Node_new(oPPrefix, oNCurr, &oNNewNode, TRUE, pvContents, ulLength);
       if(iStatus != SUCCESS) {
          Path_free(oPPath);
          Path_free(oPPrefix);
