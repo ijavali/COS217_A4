@@ -611,6 +611,12 @@ int FT_insertFile(const char *pcPath, void *pvContents, size_t ulLength) {
       return iStatus;
    }
 
+   /*oNCurr is at the root*/
+   if(oNCurr == NULL && ulCount ==0)
+   {
+      Path_free(oPPath);
+      return CONFLICTING_PATH;
+   }
    /* no ancestor node found, so if root is not NULL,
       pcPath isn't underneath root. */
    if(oNCurr == NULL && oNRoot != NULL) {
