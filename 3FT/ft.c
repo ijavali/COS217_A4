@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "path.h"
 #include "dynarray.h"
 #include "ft.h"
 #include "nodeFT.h"
@@ -184,13 +185,13 @@ static int FT_findNode(const char *pcPath, Node_T *poNResult, boolean isFile) {
       return NO_SUCH_PATH;
    }
 
-   if(isFile && !(*(*oNFound->isFile))){
+   if(isFile && !(Node_isFile(oNFound))){
       Path_free(oPPath);
       *poNResult = NULL;
       return NOT_A_FILE;
    }
 
-   if(!isFile && *(*oNFound->isFile)) {
+   if(!isFile && Node_isFile(oNFound)) {
       Path_free(oPPath);
       *poNResult = NULL;
       return NOT_A_DIRECTORY;
@@ -274,7 +275,7 @@ int FT_rmDir(const char *pcPath) {
 
    if(iStatus != SUCCESS)
        return iStatus;
-   if(*(*oNFound->isFile))
+   if(Node_isFile(oNFound))
        return NOT_A_DIRECTORY;
 
    ulCount -= Node_free(oNFound);
@@ -294,7 +295,7 @@ int FT_rmFile(const char *pcPath) {
 
    if(iStatus != SUCCESS)
        return iStatus;
-   if(!(*(*oNFound->isFile)))
+   if(!(Node_isFile(oNFound)))
        return NOT_A_FILE;
 
    ulCount -= Node_free(oNFound);
@@ -423,9 +424,9 @@ int FT_stat(const char *pcPath, boolean *pbIsFile, size_t *pulSize) {
     if(iStatus != SUCCESS){
         return iStatus;
     }
-    *pbIsFile = *(*oNFound->isFile);
-    if(*(*oNFound->isFile)){
-        *pulSize = *oNFound->ulLength;
+    *pbIsFile = Node_isFile(oNFound);
+    if(Node_isFile(oNFound)){
+        *pulSize = Node_getUlLength(oNFound);
     }
 
     return SUCCESS;
@@ -442,8 +443,8 @@ void *FT_getFileContents(const char *pcPath){
     if(iStatus != SUCCESS){
         return NULL;
     }
-    if(*(*oNFound->isFile)){
-        return *oNFound->value;
+    if(Node_isFile(oNFound)){
+        return Node_getValue(oNFound);
     }
     return NULL;
 }
@@ -467,10 +468,10 @@ void *FT_replaceFileContents(const char *pcPath, void *pvNewContents,
         return NULL;
     }
     
-    if(*(*oNFound->isFile)){
-        void* oldContent = *oNFound->value;
-        *oNFound->value = pvNewContents;
-        *oNFound->ulLength = ulNewLength;
+    if(Node_isFile(oNFound)){
+        void* oldContent = Node_getValue(oNFound);
+        Node_setValue(oNFound, pvNewContents);
+        Node_setUlLength(oNFound, ulNewLength);
         return oldContent;
     }
     return NULL;

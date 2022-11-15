@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <string.h>
+#include "path.h"
 #include "dynarray.h"
 #include "nodeFT.h"
 
@@ -196,6 +197,28 @@ int Node_new(Path_T oPPath, Node_T oNParent, Node_T *poNResult, boolean isFile, 
    return SUCCESS;
 }
 
+boolean Node_isFile(Node_T oNNode){
+   assert(oNNode != NULL);
+   return *(oNNode->isFile);
+}
+size_t Node_getUlLength(Node_T oNNode){
+   assert(oNNode != NULL);
+   return oNNode->ulLength;
+}
+void Node_setUlLength(Node_T oNNode, size_t ulLength){
+   assert(oNNode != NULL);
+   oNNode->ulLength = ulLength;
+}
+void* Node_getValue(Node_T oNNode){
+   assert(oNNode != NULL);
+   return oNNode->value;
+}
+void Node_setValue(Node_T oNNode, void* value){
+   assert(oNNode != NULL);
+   oNNode->value = value;
+}
+
+
 size_t Node_free(Node_T oNNode) {
    size_t ulIndex;
    size_t ulCount = 0;
@@ -225,7 +248,7 @@ size_t Node_free(Node_T oNNode) {
                                  ulIndex);
       }
       /* recursively remove children */
-      while(DynArray_getLength(oNNode->oDChildren) != 0) {
+      while(DynArray_getLength(oNNode->dDChildren) != 0) {
          ulCount += Node_free(DynArray_removeAt(oNNode->dDChildren, 0));
       }
    }
@@ -266,6 +289,8 @@ boolean Node_hasChild(Node_T oNParent, Path_T oPPath, boolean isFile,
                (int (*)(const void*,const void*)) Node_compareString);
 }
 
+void Node_setFile(Node_T oNNode, boolean value);
+
 size_t Node_getNumFileChildren(Node_T oNParent) {
    assert(oNParent != NULL);
 
@@ -303,7 +328,7 @@ int Node_getChild(Node_T oNParent, size_t ulChildID, boolean isFile,
          return SUCCESS;
       }
    }
-   return FAILURE;
+   return NO_SUCH_PATH;
 }
 
 Node_T Node_getParent(Node_T oNNode) {
@@ -329,10 +354,4 @@ char *Node_toString(Node_T oNNode) {
       return NULL;
    else
       return strcpy(copyPath, Path_getPathname(Node_getPath(oNNode)));
-}
-
-void *Node_getValue(Node_T oNNode) {
-    assert(oNNode != NULL);
-    
-    return oNNode->value;
 }

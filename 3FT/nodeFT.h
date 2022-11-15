@@ -53,6 +53,12 @@ Path_T Node_getPath(Node_T oNNode);
 boolean Node_hasChild(Node_T oNParent, Path_T oPPath, boolean isFile,
                          size_t *pulChildID);
 
+boolean Node_isFile(Node_T oNNode);
+size_t Node_getUlLength(Node_T oNNode);
+void Node_setUlLength(Node_T oNNode, size_t ulLength);
+void* Node_getValue(Node_T oNNode);
+void Node_setValue(Node_T oNNode, void* value);
+
 /* Returns the number of file children that oNParent has. */
 size_t Node_getNumFileChildren(Node_T oNParent);
 
