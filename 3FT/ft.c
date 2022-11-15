@@ -605,6 +605,7 @@ int FT_insertFile(const char *pcPath, void *pvContents, size_t ulLength) {
    /*oNCurr is at the root*/
    if(oNCurr == NULL && ulCount == 0)
    {
+      Path_free(oPPath);
       return CONFLICTING_PATH;
    }
 
