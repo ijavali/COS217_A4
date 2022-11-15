@@ -331,7 +331,6 @@ int FT_init(void) {
 */
 
 int FT_stat(const char *pcPath, boolean *pbIsFile, size_t *pulSize) {
-    Path_T oPPrefix = NULL;
     int iStatus;
     Node_T oNFound = NULL;
     DynArray_T oDSubstrings;
