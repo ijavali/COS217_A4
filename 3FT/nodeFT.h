@@ -44,7 +44,6 @@ Path_T Node_getPath(Node_T oNNode);
 /*
   Returns TRUE if oNParent has a child with path oPPath. Returns
   FALSE if it does not.
-
   If oNParent has such a child, stores in *pulChildID the child's
   identifier (as used in Node_getChild). If oNParent does not have
   such a child, stores in *pulChildID the identifier that such a
@@ -90,7 +89,6 @@ int Node_compare(Node_T oNFirst, Node_T oNSecond);
 /*
   Returns a string representation for oNNode, or NULL if
   there is an allocation error.
-
   Allocates memory for the returned string, which is then owned by
   the caller!
 */
