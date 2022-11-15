@@ -1,4 +1,3 @@
-
 /*--------------------------------------------------------------------*/
 /* ft.c                                                               */
 /* Author: Ishaan Javali & Jack Zhang                                 */
@@ -133,6 +132,8 @@ static int FT_traversePath(Path_T oPPath, boolean isFile, Node_T *poNFurthest) {
 
    Path_free(oPPrefix);
    *poNFurthest = oNCurr;
+   printf(" %d-- %s \n", Node_isFile(*poNFurthest), 
+   Path_getPathname(Node_getPath(*poNFurthest)));
    return SUCCESS;
 }
 /*
@@ -652,7 +653,10 @@ int FT_insertFile(const char *pcPath, void *pvContents, size_t ulLength) {
       }
 
       /* insert the new node for this level */
-      iStatus = Node_new(oPPrefix, oNCurr, &oNNewNode, TRUE, pvContents, ulLength);
+      if(ulIndex < ulDepth) /* We have to insert the directories first */
+         iStatus = Node_new(oPPrefix, oNCurr, &oNNewNode, FALSE, pvContents, ulLength);
+      else
+         iStatus = Node_new(oPPrefix, oNCurr, &oNNewNode, TRUE, pvContents, ulLength);
       if(iStatus != SUCCESS) {
          Path_free(oPPath);
          Path_free(oPPrefix);
