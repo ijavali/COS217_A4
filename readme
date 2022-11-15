@@ -17,7 +17,10 @@ information given in the "Policies" web page (also available on armlab
 in the file ~cos217/AuthorizedSourcesList ) to this section of the
 readme file, and edit it as appropriate.
 
-
+Lecture Notes and Precept Notes, the course's website, 
+the course's textbooks (King and The Practice of Programming), 
+the Intro COS Lab TA's,
+and the course's current staff members outside of class time through office hours.
 
 ------------------------------------------------------------------------
 Student 2: What authorized sources of information did you use to
@@ -26,7 +29,10 @@ information given in the "Policies" web page (also available on armlab
 in the file ~cos217/AuthorizedSourcesList ) to this section of the
 readme file, and edit it as appropriate.
 
-
+Lecture Notes and Precept Notes, the course's website, 
+the course's textbooks (King and The Practice of Programming), 
+the Intro COS Lab TA's,
+and the course's current staff members outside of class time through office hours.
 
 ------------------------------------------------------------------------
 Student 1: What unauthorized sources of information did you use to
@@ -40,7 +46,7 @@ nature of the interaction, may additionally require the interaction
 being reported to the Committee on Discipline. Write "None" if you used
 no unauthorized sources of information.
 
-
+None
 
 ------------------------------------------------------------------------
 Student 2: What unauthorized sources of information did you use to
@@ -54,13 +60,18 @@ nature of the interaction, may additionally require the interaction
 being reported to the Committee on Discipline. Write "None" if you used
 no unauthorized sources of information.
 
-
+None
 
 ------------------------------------------------------------------------
 Student 1: What is your assessment of the assignment? Was it helpful?
 Was it fun?
 
-
+The assignment was helpful because I learned a lot about modularity
+and recursive methods. I particularly enjoyed the 2nd part of the assignment
+because I had to determine which built-in methods I could use, and which
+ones I had to basically reconstruct for my checker. However,
+I honestly thought that part 1 did nothing to help me learn debugging,
+and it felt like I had wasted time.
 
 ------------------------------------------------------------------------
 Student 2: What is your assessment of the assignment? Was it helpful?
@@ -81,6 +92,52 @@ your disagreements with them? Copy the splint warnings here, and
 express your disagreement after each warning. If there are no
 warnings, then write "None."
 
+path.h:24:5: Function Path_new declared but not defined
+  A function or variable is declared, but not defined in any source code file.
+  (Use -declundef to inhibit warning)
+path.h:33:5: Function Path_dup declared but not defined
+path.h:44:5: Function Path_prefix declared but not defined
+path.h:47:6: Function Path_free declared but not defined
+path.h:50:13: Function Path_getPathname declared but not defined
+path.h:56:8: Function Path_getStrLength declared but not defined
+path.h:63:5: Function Path_comparePath declared but not defined
+path.h:70:5: Function Path_compareString declared but not defined
+path.h:77:8: Function Path_getDepth declared but not defined
+path.h:86:8: Function Path_getSharedPrefixDepth declared but not defined
+path.h:94:13: Function Path_getComponent declared but not defined
+nodeDT.h:29:5: Function Node_new declared but not defined
+nodeDT.h:36:8: Function Node_free declared but not defined
+nodeDT.h:39:8: Function Node_getPath declared but not defined
+nodeDT.h:50:9: Function Node_hasChild declared but not defined
+nodeDT.h:54:8: Function Node_getNumChildren declared but not defined
+nodeDT.h:62:5: Function Node_getChild declared but not defined
+nodeDT.h:69:8: Function Node_getParent declared but not defined
+nodeDT.h:76:5: Function Node_compare declared but not defined
+nodeDT.h:85:7: Function Node_toString declared but not defined
+dynarray.h:21:12: Function DynArray_new declared but not defined
+dynarray.h:27:6: Function DynArray_free declared but not defined
+dynarray.h:33:8: Function DynArray_getLength declared but not defined
+dynarray.h:39:7: Function DynArray_get declared but not defined
+dynarray.h:46:7: Function DynArray_set declared but not defined
+dynarray.h:55:5: Function DynArray_add declared but not defined
+dynarray.h:63:5: Function DynArray_addAt declared but not defined
+dynarray.h:70:7: Function DynArray_removeAt declared but not defined
+dynarray.h:78:6: Function DynArray_toArray declared but not defined
+dynarray.h:87:26: Function DynArray_map declared but not defined
+dynarray.h:98:26: Function DynArray_sort declared but not defined
+dynarray.h:113:27: Function DynArray_search declared but not defined
+dynarray.h:129:28: Function DynArray_bsearch declared but not defined
+checkerDT.h:16:9: Function exported but not used outside checkerDT:
+                     CheckerDT_Node_isValid
+  A declaration is exported, but not used outside this module. Declaration can
+  use static qualifier. (Use -exportlocal to inhibit warning)
+   checkerDT.c:94:1: Definition of CheckerDT_Node_isValid
+
+Finished checking --- 34 code warnings
+
+All of these errors result from our abstract encapsulation of code, meaning that
+different modules can't access the implementations of methods from others. This
+is adherent to the principles of good modular coding.
 
 
 ------------------------------------------------------------------------
@@ -89,7 +146,7 @@ disagreements with them? Copy the critTer warnings here, and express
 your disagreement after each warning. If there are no warnings, then
 write "None."
 
-
+None
 
 ------------------------------------------------------------------------
 What warnings does splint generate on your Part 3 code, and what are
