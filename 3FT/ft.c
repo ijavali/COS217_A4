@@ -324,14 +324,27 @@ int FT_rmDir(const char *pcPath) {
    Node_T oNFound = NULL;
 
    assert(pcPath != NULL);
-
+   if(FT_containsFile(pcPath)){
+      return NOT_A_DIRECTORY;
+   }
    iStatus = FT_findNode(pcPath, &oNFound, FALSE);
+   /* printf("%d\n", iStatus);
+   if(iStatus == NO_SUCH_PATH){
+      if(oNFound != NULL)
+      printf(" removing %s %d", Path_getPathname(Node_getPath(oNFound)),
+         Node_isFile(oNFound));
+      iStatus = FT_findNode(pcPath, &oNFound, TRUE);
+      if(iStatus != SUCCESS)
+         return iStatus;
+      return NOT_A_DIRECTORY;
+   } */
 
    if(iStatus != SUCCESS)
        return iStatus;
    if(Node_isFile(oNFound))
        return NOT_A_DIRECTORY;
-
+   printf(" removing %s %d\n", Path_getPathname(Node_getPath(oNFound)),
+         Node_isFile(oNFound));
    ulCount -= Node_free(oNFound);
    if(ulCount == 0)
       oNRoot = NULL;
@@ -344,9 +357,20 @@ int FT_rmFile(const char *pcPath) {
    Node_T oNFound = NULL;
 
    assert(pcPath != NULL);
+   
+   if(FT_containsDir(pcPath)){
+      return NOT_A_FILE;
+   }
 
    iStatus = FT_findNode(pcPath, &oNFound, TRUE);
-
+   /* if(iStatus == NO_SUCH_PATH){
+      if(oNFound != NULL)
+      iStatus = FT_findNode(pcPath, &oNFound, FALSE);
+      printf("NOS %d %d\n", iStatus, FT_containsDir(pcPath));
+      if(iStatus != SUCCESS)
+         return iStatus;
+      return NOT_A_FILE;
+   } */
    if(iStatus != SUCCESS)
        return iStatus;
    if(!(Node_isFile(oNFound)))

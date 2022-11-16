@@ -181,6 +181,7 @@ int main(void) {
   assert((temp = FT_toString()) != NULL);
   assert(!strcmp(temp,""));
   free(temp);
+  printf("AQUI ESTA\n");
 
   /* checking that file contents work as expected */
   assert(FT_insertDir("1root") == SUCCESS);
