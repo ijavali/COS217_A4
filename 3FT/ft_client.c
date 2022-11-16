@@ -181,15 +181,16 @@ int main(void) {
   assert((temp = FT_toString()) != NULL);
   assert(!strcmp(temp,""));
   free(temp);
-  printf("AQUI ESTA\n");
-
   /* checking that file contents work as expected */
   assert(FT_insertDir("1root") == SUCCESS);
+
   assert(FT_insertFile("1root/H", "hello, world!",
                        strlen("hello, world!")+1) == SUCCESS);
   assert(!strcmp(FT_getFileContents("1root/H"), "hello, world!"));
   bIsFile = FALSE;
   l = -1;
+  printf("AQUI ESTA\n");
+  
   assert(FT_stat("1root/H", &bIsFile, &l) == SUCCESS);
   assert(bIsFile == TRUE);
   assert(l == (strlen("hello, world!")+1));
