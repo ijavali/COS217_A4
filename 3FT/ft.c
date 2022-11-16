@@ -107,14 +107,21 @@ static int FT_traversePath(Path_T oPPath, boolean isFile, Node_T *poNFurthest) {
 
    oNCurr = oNRoot;
    ulDepth = Path_getDepth(oPPath);
+   printf("  traversing %s\n", Path_getPathname(oPPath));
+   boolean origIsFile = isFile;
    for(i = 2; i <= ulDepth; i++) {
+      if(origIsFile)
+         isFile = (i == ulDepth);
       iStatus = Path_prefix(oPPath, i, &oPPrefix);
       if(iStatus != SUCCESS) {
          *poNFurthest = NULL;
          return iStatus;
       }
+      printf(" at %s %s ___ %d \n", Path_getPathname(Node_getPath(oNCurr)), 
+      Path_getPathname(oPPrefix), isFile);
       if(Node_hasChild(oNCurr, oPPrefix, isFile, &ulChildID)) {
          /* go to that child and continue with next prefix */
+         printf(" ASDFASDJFAjskdfahsfd\n");
          Path_free(oPPrefix);
          oPPrefix = NULL;
          iStatus = Node_getChild(oNCurr, ulChildID, isFile, &oNChild);
@@ -162,11 +169,12 @@ static int FT_findNode(const char *pcPath, Node_T *poNResult, boolean isFile) {
    }
 
    iStatus = Path_new(pcPath, &oPPath);
+   printf("path===: %s\n", pcPath);
    if(iStatus != SUCCESS) {
       *poNResult = NULL;
+      printf(" %d", iStatus);
       return iStatus;
    }
-
    iStatus = FT_traversePath(oPPath, isFile, &oNFound);
    if(iStatus != SUCCESS)
    {
@@ -180,6 +188,8 @@ static int FT_findNode(const char *pcPath, Node_T *poNResult, boolean isFile) {
       *poNResult = NULL;
       return NO_SUCH_PATH;
    }
+   printf(" .  Looking for %s vs %s. file? %d\n", pcPath, Path_getPathname(Node_getPath(oNFound)),
+     Node_isFile(oNFound));
 
    if(Path_comparePath(Node_getPath(oNFound), oPPath) != 0) {
       Path_free(oPPath);
