@@ -133,6 +133,7 @@ static int FT_traversePath(Path_T oPPath, boolean isFile, Node_T *poNFurthest) {
       else {
          /* oNCurr doesn't have child with path oPPrefix:
             this is as far as we can go */
+       
          break;
       }
    }
