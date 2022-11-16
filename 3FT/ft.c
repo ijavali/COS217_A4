@@ -572,12 +572,6 @@ int FT_insertDir(const char *pcPath) {
          return ALREADY_IN_TREE;
       }
       ulDepth = Path_getDepth(oPPath);
-      if(ulIndex == ulDepth+1 && !Path_comparePath(oPPath,
-                                       Node_getPath(oNCurr))) {
-         Path_free(oPPath);
-         Path_free(zPPath);
-         return ALREADY_IN_TREE;
-      }
    }
    ulDepth = Path_getDepth(oPPath);
    /* ================ */
