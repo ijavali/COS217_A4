@@ -186,7 +186,7 @@ static int FT_findNode(const char *pcPath, Node_T *poNResult, boolean isFile) {
    }
 
    (void) Path_prefix(oPPath, Path_getDepth(Node_getPath(oNFound)), &poPResult);
-   if (Path_comparePath(poPResult, Node_getPath(oNFound)))
+   if (Path_comparePath(poPResult, Node_getPath(oNFound)) == 0)
    {
       Path_free(oPPath);
       Path_free(poPResult);
