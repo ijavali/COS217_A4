@@ -56,6 +56,17 @@ static void FT_strcatAccumulate(Node_T oNNode, char *pcAcc) {
 }
 
 /*
+  Frees pcStr. This wrapper is used to match the requirements of the
+  callback function pointer passed to DynArray_map. pvExtra is unused.
+*/
+static void Path_freeString(char *pcStr, void *pvExtra) {
+   /* pcStr may be NULL, as this is a no-op to free.
+      pvExtra may be NULL, as it is unused. */
+   free(pcStr);
+}
+
+
+/*
   Traverses the FT starting at the root as far as possible towards
   absolute path oPPath. If able to traverse, returns an int SUCCESS
   status and sets *poNFurthest to the furthest node reached (which may
