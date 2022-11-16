@@ -185,14 +185,14 @@ static int FT_findNode(const char *pcPath, Node_T *poNResult, boolean isFile) {
       return NO_SUCH_PATH;
    }
 
-   (void) Path_prefix(oPPath, Path_getDepth(Node_getPath(oNFound)), &poPResult);
+   /*(void) Path_prefix(oPPath, Path_getDepth(Node_getPath(oNFound)), &poPResult);
    if (Path_comparePath(poPResult, Node_getPath(oNFound)) == 0)
    {
       Path_free(oPPath);
       Path_free(poPResult);
       *poNResult = NULL;
       return NOT_A_DIRECTORY;
-   }
+   }*/
 
 
    if(Path_comparePath(Node_getPath(oNFound), oPPath) != 0) {
