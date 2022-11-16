@@ -54,15 +54,6 @@ static void FT_strcatAccumulate(Node_T oNNode, char *pcAcc) {
       strcat(pcAcc, "\n");
    }
 }
-/*
-  Frees pcStr. This wrapper is used to match the requirements of the
-  callback function pointer passed to DynArray_map. pvExtra is unused.
-*/
-static void Path_freeString(char *pcStr, void *pvExtra) {
-   /* pcStr may be NULL, as this is a no-op to free.
-      pvExtra may be NULL, as it is unused. */
-   free(pcStr);
-}
 
 /*
   Traverses the FT starting at the root as far as possible towards
@@ -81,6 +72,7 @@ static int FT_traversePath(Path_T oPPath, boolean isFile, Node_T *poNFurthest) {
    size_t ulDepth;
    size_t i;
    size_t ulChildID;
+   boolean origIsFile;
 
    assert(oPPath != NULL);
    assert(poNFurthest != NULL);
@@ -107,7 +99,7 @@ static int FT_traversePath(Path_T oPPath, boolean isFile, Node_T *poNFurthest) {
 
    oNCurr = oNRoot;
    ulDepth = Path_getDepth(oPPath);
-   boolean origIsFile = isFile;
+   origIsFile = isFile;
    for(i = 2; i <= ulDepth; i++) {
       if(origIsFile)
          isFile = (i == ulDepth);
@@ -116,7 +108,6 @@ static int FT_traversePath(Path_T oPPath, boolean isFile, Node_T *poNFurthest) {
          *poNFurthest = NULL;
          return iStatus;
       }
-      Path_getPathname(oPPrefix), isFile);
       if(Node_hasChild(oNCurr, oPPrefix, isFile, &ulChildID)) {
          /* go to that child and continue with next prefix */
          Path_free(oPPrefix);
@@ -137,7 +128,6 @@ static int FT_traversePath(Path_T oPPath, boolean isFile, Node_T *poNFurthest) {
 
    Path_free(oPPrefix);
    *poNFurthest = oNCurr;
-   Path_getPathname(Node_getPath(*poNFurthest)));
    return SUCCESS;
 }
 /*
