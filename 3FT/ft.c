@@ -189,9 +189,9 @@ static int FT_findNode(const char *pcPath, Node_T *poNResult, boolean isFile) {
    if (Path_comparePath(poPResult, Node_getPath(oNFound)))
    {
       Path_free(oPPath);
-      Path_free(poPResult)
+      Path_free(poPResult);
       *poNResult = NULL;
-      return NO_SUCH_DIRECTORY;
+      return NOT_A_DIRECTORY;
    }
 
 
