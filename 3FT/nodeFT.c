@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <assert.h>
 #include <string.h>
+#include <stdio.h>
 #include "path.h"
 #include "dynarray.h"
 #include "nodeFT.h"
@@ -36,15 +37,17 @@ struct node {
   or  MEMORY_ERROR if allocation fails adding oNChild to the array.
 */
 static int Node_addChild(Node_T oNParent, Node_T oNChild,
-                         size_t ulIndex) {
+                         boolean isFile, size_t ulIndex) {
    assert(oNParent != NULL);
    assert(oNChild != NULL);
-   if(oNChild->isFile){
+   if(isFile){
+      printf(" added f\n");
       if(DynArray_addAt(oNParent->fDChildren, ulIndex, oNChild))
          return SUCCESS;
       else
          return MEMORY_ERROR;
    }else{
+      printf(" added d\n");
       if(DynArray_addAt(oNParent->dDChildren, ulIndex, oNChild))
          return SUCCESS;
       else
@@ -148,6 +151,9 @@ int Node_new(Path_T oPPath, Node_T oNParent, Node_T *poNResult, boolean isFile, 
       }
    }
    psNew->oNParent = oNParent;
+   /* printf("%d", oNParent); */
+   if(oNParent != NULL)
+   printf( "|$| parent %s %d \n", Path_getPathname(Node_getPath(oNParent)), 1);
 
    /* initialize the new node */
    psNew->fDChildren = DynArray_new(0);
@@ -168,7 +174,7 @@ int Node_new(Path_T oPPath, Node_T oNParent, Node_T *poNResult, boolean isFile, 
 
    /* Link into parent's children list */
    if(oNParent != NULL) {
-      iStatus = Node_addChild(oNParent, psNew, ulIndex);
+      iStatus = Node_addChild(oNParent, psNew, isFile, ulIndex);
       if(iStatus != SUCCESS) {
          Path_free(psNew->oPPath);
          free(psNew);
@@ -194,6 +200,20 @@ int Node_new(Path_T oPPath, Node_T oNParent, Node_T *poNResult, boolean isFile, 
     }
    *poNResult = psNew;
 
+   /* printf( " |$| inserted %s %d ", Path_getPathname(Node_getPath(psNew)), 1); */
+   printf( " |$| inserted %s %d ", Path_getPathname(psNew->oPPath), *(psNew->isFile));
+   /* printf("%d asdfasdfs", oNParent == NULL); */
+
+   if(oNParent != NULL){
+      for(ulIndex = 0; ulIndex < DynArray_getLength(oNParent->fDChildren); ulIndex++){
+         Node_T temp;
+         Node_getChild(oNParent, ulIndex, TRUE, &temp);
+         if(temp != NULL)
+         printf(" -> %s %d | ", 
+         Path_getPathname(Node_getPath(temp)), *(temp->isFile));
+      } 
+      printf("done");}
+      printf("\n");
    return SUCCESS;
 }
 
@@ -280,6 +300,8 @@ boolean Node_hasChild(Node_T oNParent, Path_T oPPath, boolean isFile,
 
    /* *pulChildID is the index into oNParent->oDChildren */
    if(isFile){
+      printf(" att %s %s ___ %d \n", Path_getPathname(Node_getPath(oNParent)), 
+      Path_getPathname(oPPath), isFile);
       return DynArray_bsearch(oNParent->fDChildren,
                (char*) Path_getPathname(oPPath), pulChildID,
                (int (*)(const void*,const void*)) Node_compareString);

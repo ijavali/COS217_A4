@@ -192,8 +192,10 @@ specified in Step 2.5?
 The usage of global variables in dtGood is not effective encapsulation in modular coding, 
 since those global variables are accessed throughout multiple methods within dtGood.
 While functional, DT_traversePath and DT_insert are cumbersome and bloated. For example, DT_insert 
-could be rewritten such that just a single traversal is used to create the new path 
-to the new node (i.e. building each depth level is not necessary). 
+could be rewritten such that just a single traversal is used to follow the new path 
+to the new node, placing it correctly lexicographically 
+(specifically, DT_insert right now rebuilds the path at every depth to account
+for lexicographical order, which is unnecessary). 
 
 The code succeeds in that it is consistent - each function is named with Node or
 DT as a prefix, and each function name is abundantly representative of what it does. 
@@ -207,7 +209,9 @@ and helper functions have a clear reason for existing. While DT_contains
 and DT_findNode seem a bit redundant in functionality, DT_findNode requires a dummy variable
 to pass in a found node, so only using DT_findNode when checking if a directory tree
 contains a node would not only be confusing in meaning, but would also clutter up a method
-with more dummy variables. After the implementation of our checkerDT.c, the error checking between the client and our checker is sufficient.
+with more dummy variables. After the implementation of our checkerDT.c, the error checking between 
+the client and our checker is sufficient.
+
 The code also establishes contracts in that it is commented very clearly, with
 each parameter of each method having a clear meaning. Both the dt and nodeDT
 files have strong cohesion because each method is relevant only to the entire tree
