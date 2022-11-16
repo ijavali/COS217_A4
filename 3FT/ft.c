@@ -514,7 +514,7 @@ boolean FT_containsFile(const char *pcPath) {
 
 int FT_insertDir(const char *pcPath) {
    int iStatus;
-   Path_T oPPath = NULL;
+   Path_T oPPath = NULL, zPPath = NULL;
    Node_T oNFirstNew = NULL;
    Node_T oNCurr = NULL;
    size_t ulDepth, ulIndex;
@@ -558,18 +558,29 @@ int FT_insertDir(const char *pcPath) {
       }
    } */
    /* ================ */
+   iStatus = Path_new(pcPath, &zPPath);
+   if(iStatus != SUCCESS){
+      Path_free(oPPath);
+      Path_free(zPPath);
+      return iStatus;
+   }
 
- 
-   ulDepth = Path_getDepth(oPPath);
+   iStatus = FT_traversePath(zPPath, TRUE, &oNCurr);
+   if(iStatus != SUCCESS) {
+      Path_free(oPPath);
+      Path_free(zPPath);
+      return iStatus;
+   }
+   ulDepth = Path_getDepth(zPPath);
    if(oNCurr == NULL) /* new root! */
       ulIndex = 1;
    else {
       ulIndex = Path_getDepth(Node_getPath(oNCurr))+1;
       /* oNCurr is the node we're trying to insert */
-      if(ulIndex == ulDepth+1 && !Path_comparePath(oPPath,
+      if(ulIndex == ulDepth+1 && !Path_comparePath(zPPath,
                                        Node_getPath(oNCurr))) {
          Path_free(oPPath);
-         Path_free(oPPath);
+         Path_free(zPPath);
          return ALREADY_IN_TREE;
       }
       ulDepth = Path_getDepth(oPPath);
