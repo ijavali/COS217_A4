@@ -107,7 +107,6 @@ static int FT_traversePath(Path_T oPPath, boolean isFile, Node_T *poNFurthest) {
 
    oNCurr = oNRoot;
    ulDepth = Path_getDepth(oPPath);
-   printf("  traversing %s\n", Path_getPathname(oPPath));
    boolean origIsFile = isFile;
    for(i = 2; i <= ulDepth; i++) {
       if(origIsFile)
@@ -117,11 +116,9 @@ static int FT_traversePath(Path_T oPPath, boolean isFile, Node_T *poNFurthest) {
          *poNFurthest = NULL;
          return iStatus;
       }
-      printf(" at %s %s ___ %d \n", Path_getPathname(Node_getPath(oNCurr)), 
       Path_getPathname(oPPrefix), isFile);
       if(Node_hasChild(oNCurr, oPPrefix, isFile, &ulChildID)) {
          /* go to that child and continue with next prefix */
-         printf(" ASDFASDJFAjskdfahsfd\n");
          Path_free(oPPrefix);
          oPPrefix = NULL;
          iStatus = Node_getChild(oNCurr, ulChildID, isFile, &oNChild);
@@ -140,7 +137,6 @@ static int FT_traversePath(Path_T oPPath, boolean isFile, Node_T *poNFurthest) {
 
    Path_free(oPPrefix);
    *poNFurthest = oNCurr;
-   printf(" %d-- %s \n", Node_isFile(*poNFurthest), 
    Path_getPathname(Node_getPath(*poNFurthest)));
    return SUCCESS;
 }
@@ -169,10 +165,8 @@ static int FT_findNode(const char *pcPath, Node_T *poNResult, boolean isFile) {
    }
 
    iStatus = Path_new(pcPath, &oPPath);
-   printf("path===: %s\n", pcPath);
    if(iStatus != SUCCESS) {
       *poNResult = NULL;
-      printf(" %d", iStatus);
       return iStatus;
    }
    iStatus = FT_traversePath(oPPath, isFile, &oNFound);
@@ -188,8 +182,6 @@ static int FT_findNode(const char *pcPath, Node_T *poNResult, boolean isFile) {
       *poNResult = NULL;
       return NO_SUCH_PATH;
    }
-   printf(" .  Looking for %s vs %s. file? %d\n", pcPath, Path_getPathname(Node_getPath(oNFound)),
-     Node_isFile(oNFound));
 
    if(Path_comparePath(Node_getPath(oNFound), oPPath) != 0) {
       Path_free(oPPath);
@@ -571,7 +563,6 @@ int FT_insertDir(const char *pcPath) {
       ulIndex = 1;
    else {
       ulIndex = Path_getDepth(Node_getPath(oNCurr))+1;
-      printf("check\n");
       /* oNCurr is the node we're trying to insert */
       if(ulIndex == ulDepth+1 && !Path_comparePath(zPPath,
                                        Node_getPath(oNCurr))) {
@@ -589,7 +580,7 @@ int FT_insertDir(const char *pcPath) {
    }
    ulDepth = Path_getDepth(oPPath);
    /* ================ */
-printf("ulll %d\n", ulIndex);
+
    /* starting at oNCurr, build rest of the path one level at a time */
    while(ulIndex <= ulDepth) {
       Path_T oPPrefix = NULL;
@@ -659,7 +650,7 @@ int FT_insertFile(const char *pcPath, void *pvContents, size_t ulLength) {
       Path_free(oPPath);
       return iStatus;
    }
-   printf("%s ---\n", Path_getPathname(oPPath));
+   
    /* New modification. I added check for depth.
     because it should be valid to add "1child/2dir/3file"
     to an empty tree. however, adding file "3file" to the root is wrong. 
@@ -700,7 +691,6 @@ int FT_insertFile(const char *pcPath, void *pvContents, size_t ulLength) {
       ulIndex = 1;
    else {
       ulIndex = Path_getDepth(Node_getPath(oNCurr))+1;
-      printf("check\n");
       /* oNCurr is the node we're trying to insert */
       if(ulIndex == ulDepth+1 && !Path_comparePath(zPPath,
                                        Node_getPath(oNCurr))) {
@@ -717,7 +707,6 @@ int FT_insertFile(const char *pcPath, void *pvContents, size_t ulLength) {
       }
    }
    ulDepth = Path_getDepth(oPPath);
-   printf("ulll %d\n", ulIndex);
    /* starting at oNCurr, build rest of the path one level at a time */
    while(ulIndex <= ulDepth) {
       Path_T oPPrefix = NULL;
@@ -738,8 +727,6 @@ int FT_insertFile(const char *pcPath, void *pvContents, size_t ulLength) {
          iStatus = Node_new(oPPrefix, oNCurr, &oNNewNode, FALSE, pvContents, ulLength);
       else
          iStatus = Node_new(oPPrefix, oNCurr, &oNNewNode, TRUE, pvContents, ulLength);
-      printf("Inserted %s |||||||||\n", Path_getPathname(oPPrefix));
-      printf("----|---\n");
       if(iStatus != SUCCESS) {
          Path_free(oPPath);
          Path_free(zPPath);
