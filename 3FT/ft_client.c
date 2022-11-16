@@ -94,7 +94,9 @@ int main(void) {
 
   /* Trying to insert a third child should succeed, unlike in BDT */
   assert(FT_insertFile("1root/2third", NULL, 0) == SUCCESS);
+  printf(".\n\n");
   assert(FT_insertDir("1root/2ok/3yes/4indeed") == SUCCESS);
+  printf("=====\n\n");
   assert(FT_containsDir("1root") == TRUE);
   assert(FT_containsDir("1root/2child") == TRUE);
   assert(FT_containsDir("1root/2second") == TRUE);
@@ -128,6 +130,17 @@ int main(void) {
   free(temp);
 
   /* Attempting to insert a child of a file is illegal */
+   printf(" =====\n\n\n");
+   assert(FT_insertFile("1root/2a/3f", NULL, 0) == SUCCESS);
+   /* assert(FT_insertDir("1root/2a/3f") == SUCCESS); */
+   assert(FT_insertDir("1root/2a/3f/3nopeD/4faa") == NOT_A_DIRECTORY);
+   printf(" =====\n\n\n");
+   assert(FT_insertFile("1root/2a/3f/3nopeD/4faa", NULL, 0) == NOT_A_DIRECTORY);
+   printf(" =====\n\n\n");
+  assert(FT_insertDir("1root/2third/3nopeD/4faa") == NOT_A_DIRECTORY);
+   printf(" =====\n\n\n");
+  assert(FT_insertFile("1root/2third/3nopeD/4faa", NULL, 0) == NOT_A_DIRECTORY);
+   printf(" =====\n\n\n");
   assert(FT_insertDir("1root/2third/3nopeD") == NOT_A_DIRECTORY);
   assert(FT_containsDir("1root/2third/3nopeD") == FALSE);
   assert(FT_insertFile("1root/2third/3nopeF", NULL, 0) ==

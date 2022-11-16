@@ -134,14 +134,56 @@ static int FT_traversePath(Path_T oPPath, boolean isFile, Node_T *poNFurthest) {
       else {
          /* oNCurr doesn't have child with path oPPrefix:
             this is as far as we can go */
-         break;
+            /* If the original thing we were searching for is a file, see if we can go here. */
+            /* Added this to fix "Attempting to insert a child of a file is illegal" (line 130ish)
+            Reasoning: Imagine this. path we're traversing is a/b/c/d/e/file.
+               what exists: a/b/c (file)
+               originally, it would go to dir a, then dir b, dir c (nope)
+               so it stops at a/b.
+               we could've gone a/b/c (file) and then realized its impossible to insert anything else.
+
+             */
+            if(origIsFile){
+               isFile = TRUE;
+               iStatus = Path_prefix(oPPath, i, &oPPrefix);
+               if(iStatus != SUCCESS) {
+                  *poNFurthest = NULL;
+                  return iStatus;
+               }
+               printf(" at %s %s ___ %d \n", Path_getPathname(Node_getPath(oNCurr)), 
+               Path_getPathname(oPPrefix), isFile);
+               if(Node_hasChild(oNCurr, oPPrefix, isFile, &ulChildID)) {
+                  /* go to that child and continue with next prefix */
+                  printf(" ENTERED INTO FILE PREMATURELY. NOT A DIRECTORY. UNABLE TO TRAVERSE THE LEFTOVER FOLDERS\n");
+                  Path_free(oPPrefix);
+                  oPPrefix = NULL;
+                  iStatus = Node_getChild(oNCurr, ulChildID, isFile, &oNChild);
+                  if(iStatus != SUCCESS) {
+                     *poNFurthest = NULL;
+                     return iStatus;
+                  }
+                  oNCurr = oNChild;
+                  /* If the only path forward is to enter
+                  into a file prematurely (in the path variable we were passed 
+                  for traversing there are still more folders to go through)
+                  then that means we can't traverse the rest of that path.
+                  that's an error. this is not a directory
+                   */
+                  if(i != ulDepth) {
+                     Path_free(oPPrefix);
+                     *poNFurthest = oNCurr;
+                     return NOT_A_DIRECTORY;
+                  }
+               }
+            }
+            break;
       }
    }
 
    Path_free(oPPrefix);
    *poNFurthest = oNCurr;
-   printf(" %d-- %s \n", Node_isFile(*poNFurthest), 
-   Path_getPathname(Node_getPath(*poNFurthest)));
+   /* printf(" %d-- %s \n", Node_isFile(*poNFurthest),  */
+   Path_getPathname(Node_getPath(*poNFurthest));
    return SUCCESS;
 }
 /*
@@ -580,7 +622,19 @@ int FT_insertDir(const char *pcPath) {
          Path_free(zPPath);
          return ALREADY_IN_TREE;
       }
-      ulDepth = Path_getDepth(oPPath);
+   }
+   iStatus = FT_traversePath(oPPath, FALSE, &oNCurr);
+   if(iStatus != SUCCESS) {
+      Path_free(oPPath);
+      Path_free(zPPath);
+      return iStatus;
+   }
+   ulDepth = Path_getDepth(oPPath);
+   if(oNCurr == NULL) /* new root! */
+      ulIndex = 1;
+   else {
+      ulIndex = Path_getDepth(Node_getPath(oNCurr))+1;
+      printf("check 2.0\n");
       if(ulIndex == ulDepth+1 && !Path_comparePath(oPPath,
                                        Node_getPath(oNCurr))) {
          Path_free(oPPath);
@@ -588,9 +642,20 @@ int FT_insertDir(const char *pcPath) {
          return ALREADY_IN_TREE;
       }
    }
-   ulDepth = Path_getDepth(oPPath);
+   
    /* ================ */
-printf("ulll %d\n", ulIndex);
+   printf( "%s here\n", Path_getPathname(oPPath));
+   printf("__________________\n");
+   FT_traversePath(oPPath, TRUE, &oNCurr);
+   printf("^^^^^^^^^^^^^^^^^^\n");
+   printf("ulll %d %d \n", ulIndex, ulDepth);
+   /* if(ulIndex < ulDepth && ulIndex > 1){
+      if(oNCurr != NULL){
+         printf(" oNCurr: %s %d\n", Path_getPathname(Node_getPath(oNCurr)),
+            Node_isFile(oNCurr));
+      }
+   } */
+
    /* starting at oNCurr, build rest of the path one level at a time */
    while(ulIndex <= ulDepth) {
       Path_T oPPrefix = NULL;
@@ -709,7 +774,19 @@ int FT_insertFile(const char *pcPath, void *pvContents, size_t ulLength) {
          Path_free(zPPath);
          return ALREADY_IN_TREE;
       }
-      ulDepth = Path_getDepth(oPPath);
+   }
+   iStatus = FT_traversePath(oPPath, TRUE, &oNCurr);
+   if(iStatus != SUCCESS) {
+      Path_free(oPPath);
+      Path_free(zPPath);
+      return iStatus;
+   }
+   ulDepth = Path_getDepth(oPPath);
+   if(oNCurr == NULL) /* new root! */
+      ulIndex = 1;
+   else {
+      ulIndex = Path_getDepth(Node_getPath(oNCurr))+1;
+      printf("check 2.0\n");
       if(ulIndex == ulDepth+1 && !Path_comparePath(oPPath,
                                        Node_getPath(oNCurr))) {
          Path_free(oPPath);
@@ -717,8 +794,16 @@ int FT_insertFile(const char *pcPath, void *pvContents, size_t ulLength) {
          return ALREADY_IN_TREE;
       }
    }
-   ulDepth = Path_getDepth(oPPath);
-   printf("ulll %d\n", ulIndex);
+
+   printf("ulll %d %d \n", ulIndex, ulDepth);
+   if(ulIndex < ulDepth && ulIndex > 1){
+      if(oNCurr != NULL){
+         printf(" oNCurr: %s %d\n", Path_getPathname(Node_getPath(oNCurr)),
+            Node_isFile(oNCurr));
+      }
+   }
+
+
    /* starting at oNCurr, build rest of the path one level at a time */
    while(ulIndex <= ulDepth) {
       Path_T oPPrefix = NULL;
