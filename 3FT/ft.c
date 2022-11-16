@@ -509,7 +509,7 @@ boolean FT_containsFile(const char *pcPath) {
 
 int FT_insertDir(const char *pcPath) {
    int iStatus;
-   Path_T oPPath = NULL;
+   Path_T oPPath = NULL, zPPath = NULL;
    Node_T oNFirstNew = NULL;
    Node_T oNCurr = NULL;
    size_t ulDepth, ulIndex;
@@ -540,20 +540,57 @@ int FT_insertDir(const char *pcPath) {
       return CONFLICTING_PATH;
    }
 
-   ulDepth = Path_getDepth(oPPath);
-   if(oNCurr == NULL) /* new root! */
+   /* Originally */
+   /* ulDepth = Path_getDepth(oPPath);
+   if(oNCurr == NULL) 
       ulIndex = 1;
    else {
       ulIndex = Path_getDepth(Node_getPath(oNCurr))+1;
 
-      /* oNCurr is the node we're trying to insert */
       if(ulIndex == ulDepth+1 && !Path_comparePath(oPPath,
                                        Node_getPath(oNCurr))) {
          Path_free(oPPath);
          return ALREADY_IN_TREE;
       }
+   } */
+   /* ================ */
+   iStatus = Path_new(pcPath, &zPPath);
+   if(iStatus != SUCCESS){
+      Path_free(oPPath);
+      Path_free(zPPath);
+      return iStatus;
    }
 
+   iStatus = FT_traversePath(zPPath, TRUE, &oNCurr);
+   if(iStatus != SUCCESS) {
+      Path_free(oPPath);
+      Path_free(zPPath);
+      return iStatus;
+   }
+   ulDepth = Path_getDepth(zPPath);
+   if(oNCurr == NULL) /* new root! */
+      ulIndex = 1;
+   else {
+      ulIndex = Path_getDepth(Node_getPath(oNCurr))+1;
+      printf("check\n");
+      /* oNCurr is the node we're trying to insert */
+      if(ulIndex == ulDepth+1 && !Path_comparePath(zPPath,
+                                       Node_getPath(oNCurr))) {
+         Path_free(oPPath);
+         Path_free(zPPath);
+         return ALREADY_IN_TREE;
+      }
+      ulDepth = Path_getDepth(oPPath);
+      if(ulIndex == ulDepth+1 && !Path_comparePath(oPPath,
+                                       Node_getPath(oNCurr))) {
+         Path_free(oPPath);
+         Path_free(zPPath);
+         return ALREADY_IN_TREE;
+      }
+   }
+   ulDepth = Path_getDepth(oPPath);
+   /* ================ */
+printf("ulll %d\n", ulIndex);
    /* starting at oNCurr, build rest of the path one level at a time */
    while(ulIndex <= ulDepth) {
       Path_T oPPrefix = NULL;
@@ -598,7 +635,7 @@ int FT_insertDir(const char *pcPath) {
 
 int FT_insertFile(const char *pcPath, void *pvContents, size_t ulLength) {
    int iStatus;
-   Path_T oPPath = NULL;
+   Path_T oPPath = NULL, zPPath = NULL;
    Node_T oNFirstNew = NULL;
    Node_T oNCurr = NULL;
    size_t ulDepth, ulIndex;
@@ -611,19 +648,26 @@ int FT_insertFile(const char *pcPath, void *pvContents, size_t ulLength) {
       return INITIALIZATION_ERROR;
 
    iStatus = Path_new(pcPath, &oPPath);
-   if(iStatus != SUCCESS)
+   if(iStatus != SUCCESS){
+      Path_free(oPPath);
       return iStatus;
+   }
 
    /* find the closest ancestor of oPPath already in the tree */
-   iStatus= FT_traversePath(oPPath, TRUE, &oNCurr);
+   iStatus = FT_traversePath(oPPath, TRUE, &oNCurr);
    if(iStatus != SUCCESS)
    {
       Path_free(oPPath);
       return iStatus;
    }
-
+   printf("%s ---\n", Path_getPathname(oPPath));
+   /* New modification. I added check for depth.
+    because it should be valid to add "1child/2dir/3file"
+    to an empty tree. however, adding file "3file" to the root is wrong. 
+    Significance: now you can do insertfile("1root/2child/3gkid" as the very first insert and it works)
+    */
    /*oNCurr is at the root*/
-   if(oNCurr == NULL && ulCount ==0)
+   if(oNCurr == NULL && ulCount ==0 && Path_getDepth(oPPath) == 1)
    {
       Path_free(oPPath);
       return CONFLICTING_PATH;
@@ -635,20 +679,46 @@ int FT_insertFile(const char *pcPath, void *pvContents, size_t ulLength) {
       return CONFLICTING_PATH;
    }
 
-   ulDepth = Path_getDepth(oPPath);
+/* DONE: You have to copy this over to insertDir */
+/* Commented out below and moved it below */
+   /* ulDepth = Path_getDepth(oPPath); */
+   iStatus = Path_new(pcPath, &zPPath);
+   if(iStatus != SUCCESS){
+      Path_free(oPPath);
+      Path_free(zPPath);
+      return iStatus;
+   }
+
+   /* find the closest ancestor of oPPath already in the tree */
+   iStatus = FT_traversePath(zPPath, FALSE, &oNCurr);
+   if(iStatus != SUCCESS) {
+      Path_free(oPPath);
+      Path_free(zPPath);
+      return iStatus;
+   }
+   ulDepth = Path_getDepth(zPPath);
    if(oNCurr == NULL) /* new root! */
       ulIndex = 1;
    else {
       ulIndex = Path_getDepth(Node_getPath(oNCurr))+1;
-
+      printf("check\n");
       /* oNCurr is the node we're trying to insert */
+      if(ulIndex == ulDepth+1 && !Path_comparePath(zPPath,
+                                       Node_getPath(oNCurr))) {
+         Path_free(oPPath);
+         Path_free(zPPath);
+         return ALREADY_IN_TREE;
+      }
+      ulDepth = Path_getDepth(oPPath);
       if(ulIndex == ulDepth+1 && !Path_comparePath(oPPath,
                                        Node_getPath(oNCurr))) {
          Path_free(oPPath);
+         Path_free(zPPath);
          return ALREADY_IN_TREE;
       }
    }
-
+   ulDepth = Path_getDepth(oPPath);
+   printf("ulll %d\n", ulIndex);
    /* starting at oNCurr, build rest of the path one level at a time */
    while(ulIndex <= ulDepth) {
       Path_T oPPrefix = NULL;
@@ -658,6 +728,7 @@ int FT_insertFile(const char *pcPath, void *pvContents, size_t ulLength) {
       iStatus = Path_prefix(oPPath, ulIndex, &oPPrefix);
       if(iStatus != SUCCESS) {
          Path_free(oPPath);
+         Path_free(zPPath);
          if(oNFirstNew != NULL)
             (void) Node_free(oNFirstNew);
          return iStatus;
@@ -668,8 +739,11 @@ int FT_insertFile(const char *pcPath, void *pvContents, size_t ulLength) {
          iStatus = Node_new(oPPrefix, oNCurr, &oNNewNode, FALSE, pvContents, ulLength);
       else
          iStatus = Node_new(oPPrefix, oNCurr, &oNNewNode, TRUE, pvContents, ulLength);
+      printf("Inserted %s |||||||||\n", Path_getPathname(oPPrefix));
+      printf("----|---\n");
       if(iStatus != SUCCESS) {
          Path_free(oPPath);
+         Path_free(zPPath);
          Path_free(oPPrefix);
          if(oNFirstNew != NULL)
             (void) Node_free(oNFirstNew);
@@ -684,7 +758,7 @@ int FT_insertFile(const char *pcPath, void *pvContents, size_t ulLength) {
          oNFirstNew = oNCurr;
       ulIndex++;
    }
-
+   Path_free(zPPath);
    Path_free(oPPath);
    /* update FT state variables to reflect insertion */
    if(oNRoot == NULL)

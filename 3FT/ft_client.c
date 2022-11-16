@@ -72,6 +72,7 @@ int main(void) {
      return CONFLICTING_PATH.
   */
   assert(FT_insertDir("1root/2child/3gkid") == SUCCESS);
+  /* assert(FT_insertFile("1root/2child/3gkid", NULL, 0) == SUCCESS); */
   assert(FT_containsDir("1root") == TRUE);
   assert(FT_containsFile("1root") == FALSE);
   assert(FT_containsDir("1root/2child") == TRUE);
