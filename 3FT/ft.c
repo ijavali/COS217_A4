@@ -175,7 +175,7 @@ static int FT_traversePath(Path_T oPPath, boolean isFile, Node_T *poNFurthest) {
 
    Path_free(oPPrefix);
    *poNFurthest = oNCurr;
-   Path_free(oNChild);
+   Node_free(oNChild);
    Path_getPathname(Node_getPath(*poNFurthest));
    return SUCCESS;
 }
