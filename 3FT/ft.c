@@ -81,8 +81,7 @@ static int FT_traversePath(Path_T oPPath, boolean isFile, Node_T *poNFurthest) {
    size_t ulDepth;
    size_t i;
    size_t ulChildID;
-   boolean origIsFile;
-   
+
    assert(oPPath != NULL);
    assert(poNFurthest != NULL);
 
@@ -108,7 +107,7 @@ static int FT_traversePath(Path_T oPPath, boolean isFile, Node_T *poNFurthest) {
 
    oNCurr = oNRoot;
    ulDepth = Path_getDepth(oPPath);
-   origIsFile = isFile;
+   boolean origIsFile = isFile;
    for(i = 2; i <= ulDepth; i++) {
       if(origIsFile)
          isFile = (i == ulDepth);
@@ -138,6 +137,7 @@ static int FT_traversePath(Path_T oPPath, boolean isFile, Node_T *poNFurthest) {
                originally, it would go to dir a, then dir b, dir c (nope)
                so it stops at a/b.
                we could've gone a/b/c (file) and then realized its impossible to insert anything else.
+
              */
             if(origIsFile){
                isFile = TRUE;
@@ -601,6 +601,7 @@ int FT_insertDir(const char *pcPath) {
       ulIndex = 1;
    else {
       ulIndex = Path_getDepth(Node_getPath(oNCurr))+1;
+
       if(ulIndex == ulDepth+1 && !Path_comparePath(oPPath,
                                        Node_getPath(oNCurr))) {
          Path_free(oPPath);
