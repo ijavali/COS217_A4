@@ -246,7 +246,6 @@ int main(void) {
   assert(FT_destroy() == INITIALIZATION_ERROR);
   assert(FT_containsDir("1root") == FALSE);
   assert(FT_containsFile("1root") == FALSE);
-  printf()
   assert((temp = FT_toString()) == NULL);
 
   return 0;
