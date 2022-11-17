@@ -190,7 +190,7 @@ int main(void) {
   bIsFile = FALSE;
   l = -1;
   printf("AQUI ESTA\n");
-  
+  printf("RESULT %d\n", FT_stat("1root/H", &bIsFile, &l));
   assert(FT_stat("1root/H", &bIsFile, &l) == SUCCESS);
   assert(bIsFile == TRUE);
   assert(l == (strlen("hello, world!")+1));
