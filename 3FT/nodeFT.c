@@ -41,13 +41,11 @@ static int Node_addChild(Node_T oNParent, Node_T oNChild,
    assert(oNParent != NULL);
    assert(oNChild != NULL);
    if(isFile){
-      printf(" added f\n");
       if(DynArray_addAt(oNParent->fDChildren, ulIndex, oNChild))
          return SUCCESS;
       else
          return MEMORY_ERROR;
    }else{
-      printf(" added d\n");
       if(DynArray_addAt(oNParent->dDChildren, ulIndex, oNChild))
          return SUCCESS;
       else
@@ -245,8 +243,7 @@ size_t Node_free(Node_T oNNode) {
    size_t ulCount = 0;
 
    assert(oNNode != NULL);
-   printf("\n\n\nfreeing %s %d", Path_getPathname(Node_getPath(oNNode)),
-    *(oNNode->isFile));
+
    /* remove this file from parent's list */
    if(*(oNNode->isFile)){
       if(oNNode->oNParent != NULL) {
@@ -309,8 +306,6 @@ boolean Node_hasChild(Node_T oNParent, Path_T oPPath, boolean isFile,
 
    /* *pulChildID is the index into oNParent->oDChildren */
    if(isFile){
-      printf(" att %s %s ___ %d \n", Path_getPathname(Node_getPath(oNParent)), 
-      Path_getPathname(oPPath), isFile);
       return DynArray_bsearch(oNParent->fDChildren,
                (char*) Path_getPathname(oPPath), pulChildID,
                (int (*)(const void*,const void*)) Node_compareString);
