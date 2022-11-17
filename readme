@@ -191,11 +191,11 @@ specified in Step 2.5?
 
 The usage of global variables in dtGood is not effective encapsulation in modular coding, 
 since those global variables are accessed throughout multiple methods within dtGood.
-While functional, DT_traversePath and DT_insert are cumbersome and bloated. For example, DT_insert 
-could be rewritten such that just a single traversal is used to follow the new path 
-to the new node, placing it correctly lexicographically 
-(specifically, DT_insert right now rebuilds the path at every depth to account
-for lexicographical order, which is unnecessary). 
+While functional, DT_traversePath and DT_insert appear cumbersome and bloated. However,
+due to internal comments, they are still clear in their purpose, and each step in their
+iterated loops is logical. bIsInitialized could be renamed to bTreeIsInitialized
+for clarity, and oNCurr and oNChild used in DT_traversePath are unclear variable names. ulCount could
+also be renamed to ulNumNodes, for further clarity, and oNFirstNew is named poorly in DT_insert.
 
 The code succeeds in that it is consistent - each function is named with Node or
 DT as a prefix, and each function name is abundantly representative of what it does. 
