@@ -175,6 +175,7 @@ static int FT_traversePath(Path_T oPPath, boolean isFile, Node_T *poNFurthest) {
 
    Path_free(oPPrefix);
    *poNFurthest = oNCurr;
+   Path_free(oNChild)
    Path_getPathname(Node_getPath(*poNFurthest));
    return SUCCESS;
 }
@@ -466,20 +467,6 @@ int FT_stat(const char *pcPath, boolean *pbIsFile, size_t *pulSize) {
 
         pcStart++;
     }
-
-    /* Copied from dtGood.c, FT_traversePath */
-    /* Path_prefix can return NO_SUCH_PATH and MEMORY_ERROR */
-    /* TODO commented out below to fix error */
-    /* iStatus = Path_prefix(pcPath, 1, &oPPrefix);
-    if(iStatus != SUCCESS) {
-        return iStatus;
-    }
-    if(Path_comparePath(Node_getPath(oNRoot), oPPrefix)) {
-        Path_free(oPPrefix);
-        return CONFLICTING_PATH;
-    } */
-    
-    /* -------- */
 
     iStatus = FT_findNode(pcPath, &oNFound, *pbIsFile);
     if(iStatus != SUCCESS){
