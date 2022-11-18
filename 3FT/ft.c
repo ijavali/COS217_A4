@@ -80,7 +80,8 @@ static int FT_traversePath(Path_T oPPath, boolean isFile, Node_T *poNFurthest) {
    Node_T oNChild = NULL;
    size_t ulDepth;
    size_t i;
-   size_t ulChildID;
+   size_t ulChildID; 
+   boolean origIsFile;
 
    assert(oPPath != NULL);
    assert(poNFurthest != NULL);
@@ -107,7 +108,7 @@ static int FT_traversePath(Path_T oPPath, boolean isFile, Node_T *poNFurthest) {
 
    oNCurr = oNRoot;
    ulDepth = Path_getDepth(oPPath);
-   boolean origIsFile = isFile;
+   origIsFile = isFile;
    for(i = 2; i <= ulDepth; i++) {
       if(origIsFile)
          isFile = (boolean) (i == ulDepth);
