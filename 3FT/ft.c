@@ -175,7 +175,6 @@ static int FT_traversePath(Path_T oPPath, boolean isFile, Node_T *poNFurthest) {
 
    Path_free(oPPrefix);
    *poNFurthest = oNCurr;
-   Node_free(oNChild);
    Path_getPathname(Node_getPath(*poNFurthest));
    return SUCCESS;
 }
@@ -456,6 +455,7 @@ int FT_stat(const char *pcPath, boolean *pbIsFile, size_t *pulSize) {
             DynArray_map(oDSubstrings,
                          (void (*)(void *, void *))Path_freeString, NULL);
             DynArray_free(oDSubstrings);
+            free(pcCopy);
             return MEMORY_ERROR;
         }
 
@@ -468,10 +468,27 @@ int FT_stat(const char *pcPath, boolean *pbIsFile, size_t *pulSize) {
         pcStart++;
     }
 
+    /* Copied from dtGood.c, FT_traversePath */
+    /* Path_prefix can return NO_SUCH_PATH and MEMORY_ERROR */
+    /* TODO commented out below to fix error */
+    /* iStatus = Path_prefix(pcPath, 1, &oPPrefix);
+    if(iStatus != SUCCESS) {
+        return iStatus;
+    }
+    if(Path_comparePath(Node_getPath(oNRoot), oPPrefix)) {
+        Path_free(oPPrefix);
+        return CONFLICTING_PATH;
+    } */
+    
+    /* -------- */
+
     iStatus = FT_findNode(pcPath, &oNFound, *pbIsFile);
     if(iStatus != SUCCESS){
         iStatus = FT_findNode(pcPath, &oNFound, 1 - *pbIsFile);
          if(iStatus != SUCCESS){
+            DynArray_map(oDSubstrings,
+                         (void (*)(void *, void *))Path_freeString, NULL);
+            DynArray_free(oDSubstrings);
             return iStatus;
          }
     }
@@ -718,7 +735,7 @@ int FT_insertFile(const char *pcPath, void *pvContents, size_t ulLength) {
     Significance: now you can do insertfile("1root/2child/3gkid" as the very first insert and it works)
     */
    /*oNCurr is at the root*/
-   if(oNCurr == NULL && ulCount ==0 && Path_getDepth(oPPath) == 1)
+   if(oNCurr == NULL && ulCount == 0 && Path_getDepth(oPPath) == 1)
    {
       Path_free(oPPath);
       return CONFLICTING_PATH;
