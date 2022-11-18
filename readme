@@ -178,7 +178,7 @@ the error manifests itself or is "noticed" by the client.
 ---------------------------------------------------------------
          ./bdtBad2        BDT_freeSubtree
 ---------------------------------------------------------------
-         ./bdtBad3        BDT_traversePath
+         ./bdtBad3        BDT_addChild
 ---------------------------------------------------------------
          ./bdtBad4        BDT_strlenAccumulate
 ---------------------------------------------------------------
