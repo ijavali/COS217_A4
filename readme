@@ -178,11 +178,11 @@ the error manifests itself or is "noticed" by the client.
 ---------------------------------------------------------------
          ./bdtBad2        BDT_freeSubtree
 ---------------------------------------------------------------
-         ./bdtBad3        BDT_traversePath
+         ./bdtBad3        BDT_newNode (BDT_addChild doesn't link child to parent)
 ---------------------------------------------------------------
          ./bdtBad4        BDT_strlenAccumulate
 ---------------------------------------------------------------
-         ./bdtBad5        BDT_rm
+         ./bdtBad5        BDT_findNode
 ===============================================================
 
 ------------------------------------------------------------------------
@@ -191,11 +191,9 @@ specified in Step 2.5?
 
 The usage of global variables in dtGood is not effective encapsulation in modular coding, 
 since those global variables are accessed throughout multiple methods within dtGood.
-While functional, DT_traversePath and DT_insert appear cumbersome and bloated. However,
-due to internal comments, they are still clear in their purpose, and each step in their
-iterated loops is logical. bIsInitialized could be renamed to bTreeIsInitialized
-for clarity, and oNCurr and oNChild used in DT_traversePath are unclear variable names. ulCount could
-also be renamed to ulNumNodes, for further clarity, and oNFirstNew is named poorly in DT_insert.
+While functional, DT_traversePath and DT_insert are cumbersome and bloated. For example, DT_insert 
+could be rewritten such that just a single traversal is used to create the new path 
+to the new node (i.e. building each depth level is not necessary). 
 
 The code succeeds in that it is consistent - each function is named with Node or
 DT as a prefix, and each function name is abundantly representative of what it does. 
@@ -209,9 +207,7 @@ and helper functions have a clear reason for existing. While DT_contains
 and DT_findNode seem a bit redundant in functionality, DT_findNode requires a dummy variable
 to pass in a found node, so only using DT_findNode when checking if a directory tree
 contains a node would not only be confusing in meaning, but would also clutter up a method
-with more dummy variables. After the implementation of our checkerDT.c, the error checking between 
-the client and our checker is sufficient.
-
+with more dummy variables. After the implementation of our checkerDT.c, the error checking between the client and our checker is sufficient.
 The code also establishes contracts in that it is commented very clearly, with
 each parameter of each method having a clear meaning. Both the dt and nodeDT
 files have strong cohesion because each method is relevant only to the entire tree
