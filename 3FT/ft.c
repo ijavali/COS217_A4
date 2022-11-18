@@ -110,7 +110,7 @@ static int FT_traversePath(Path_T oPPath, boolean isFile, Node_T *poNFurthest) {
    boolean origIsFile = isFile;
    for(i = 2; i <= ulDepth; i++) {
       if(origIsFile)
-         isFile = (i == ulDepth);
+         isFile = (bool) (i == ulDepth);
       iStatus = Path_prefix(oPPath, i, &oPPrefix);
       if(iStatus != SUCCESS) {
          *poNFurthest = NULL;
