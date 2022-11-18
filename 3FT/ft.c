@@ -455,6 +455,7 @@ int FT_stat(const char *pcPath, boolean *pbIsFile, size_t *pulSize) {
             DynArray_map(oDSubstrings,
                          (void (*)(void *, void *))Path_freeString, NULL);
             DynArray_free(oDSubstrings);
+            free(pcCopy);
             return MEMORY_ERROR;
         }
 
@@ -485,6 +486,9 @@ int FT_stat(const char *pcPath, boolean *pbIsFile, size_t *pulSize) {
     if(iStatus != SUCCESS){
         iStatus = FT_findNode(pcPath, &oNFound, 1 - *pbIsFile);
          if(iStatus != SUCCESS){
+            DynArray_map(oDSubstrings,
+                         (void (*)(void *, void *))Path_freeString, NULL);
+            DynArray_free(oDSubstrings);
             return iStatus;
          }
     }
@@ -731,7 +735,7 @@ int FT_insertFile(const char *pcPath, void *pvContents, size_t ulLength) {
     Significance: now you can do insertfile("1root/2child/3gkid" as the very first insert and it works)
     */
    /*oNCurr is at the root*/
-   if(oNCurr == NULL && ulCount ==0 && Path_getDepth(oPPath) == 1)
+   if(oNCurr == NULL && ulCount == 0 && Path_getDepth(oPPath) == 1)
    {
       Path_free(oPPath);
       return CONFLICTING_PATH;

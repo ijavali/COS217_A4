@@ -164,6 +164,7 @@ int Node_new(Path_T oPPath, Node_T oNParent, Node_T *poNResult, boolean isFile, 
    /* initialize the new node */
    psNew->dDChildren = DynArray_new(0);
    if(psNew->dDChildren == NULL) {
+      DynArray_free(psNew->fDChildren);
       Path_free(psNew->oPPath);
       free(psNew);
       *poNResult = NULL;
@@ -211,7 +212,7 @@ int Node_new(Path_T oPPath, Node_T oNParent, Node_T *poNResult, boolean isFile, 
          Path_getPathname(Node_getPath(temp)), *(temp->isFile)); */
       } 
      /*  printf("done"); */
-      }
+   }
       /* printf("\n"); */
    return SUCCESS;
 }
@@ -252,8 +253,6 @@ size_t Node_free(Node_T oNNode) {
                oNNode, &ulIndex,
                (int (*)(const void *, const void *)) Node_compare)
          ){
-            /* printf("  rem %s @ %d\n", 
-            Path_getPathname(Node_getPath(oNNode)), ulIndex); */
             (void) DynArray_removeAt(oNNode->oNParent->fDChildren,
                                  ulIndex);
          }
