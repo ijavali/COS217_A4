@@ -43,7 +43,8 @@ Path_T Node_getPath(Node_T oNNode);
 
 /*
   Returns TRUE if oNParent has a child with path oPPath. Returns
-  FALSE if it does not.
+  FALSE if it does not. isFile is used to determine whether to binary
+  search in oNParent's file or directory child DynArray.
   If oNParent has such a child, stores in *pulChildID the child's
   identifier (as used in Node_getChild). If oNParent does not have
   such a child, stores in *pulChildID the identifier that such a
@@ -90,7 +91,9 @@ size_t Node_getNumDirChildren(Node_T oNParent);
 
 /*
   Returns an int SUCCESS status and sets *poNResult to be the child
-  node of oNParent with identifier ulChildID, if one exists.
+  node of oNParent with identifier ulChildID, if one exists. 
+  isFile is used to determine whether to return a child
+  from oNParent's file or directory child DynArray.
   Otherwise, sets *poNResult to NULL and returns status:
   * NO_SUCH_PATH if ulChildID is not a valid child for oNParent
 */
