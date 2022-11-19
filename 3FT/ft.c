@@ -62,7 +62,9 @@ static void Path_freeString(char *pcStr, void *pvExtra) {
 
 /*
   Traverses the FT starting at the root as far as possible towards
-  absolute path oPPath. If able to traverse, returns an int SUCCESS
+  absolute path oPPath. Uses isFile
+  to search in either a file or directory child array.
+  If able to traverse, returns an int SUCCESS
   status and sets *poNFurthest to the furthest node reached (which may
   be only a prefix of oPPath, or even NULL if the root is NULL).
   Otherwise, sets *poNFurthest to NULL and returns with status:
@@ -178,7 +180,8 @@ static int FT_traversePath(Path_T oPPath, boolean isFile, Node_T *poNFurthest) {
 }
 
 /*
-  Traverses the FT to find a node with absolute path pcPath. Returns a
+  Traverses the FT to find a node with absolute path pcPath. Uses isFile
+  to search in either a file or directory child array. Returns a
   int SUCCESS status and sets *poNResult to be the node, if found.
   Otherwise, sets *poNResult to NULL and returns with status:
   * INITIALIZATION_ERROR if the FT is not in an initialized state
