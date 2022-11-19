@@ -43,8 +43,8 @@ Path_T Node_getPath(Node_T oNNode);
 
 /*
   Returns TRUE if oNParent has a child with path oPPath. Returns
-  FALSE if it does not. isFile is used to determine whether to binary
-  search in oNParent's file or directory child DynArray.
+  FALSE if it does not.
+
   If oNParent has such a child, stores in *pulChildID the child's
   identifier (as used in Node_getChild). If oNParent does not have
   such a child, stores in *pulChildID the identifier that such a
@@ -53,34 +53,10 @@ Path_T Node_getPath(Node_T oNNode);
 boolean Node_hasChild(Node_T oNParent, Path_T oPPath, boolean isFile,
                          size_t *pulChildID);
 
-/*
-  Returns TRUE if oNNode is a file, FALSE if it is a directory
-*/
 boolean Node_isFile(Node_T oNNode);
-
-/*
-  Returns the size of file contents in bytes if oNNode is a file;
-  else returns 0.
-*/
 size_t Node_getUlLength(Node_T oNNode);
-
-/*
-  Sets the size of oNNode's file contents in bytes to ulLength.
-  Returns nothing.
-*/
 void Node_setUlLength(Node_T oNNode, size_t ulLength);
-
-/*
-  Returns a pointer to the value of oNNode's file contents.
-  Returns NULL if not a file.
-*/
 void* Node_getValue(Node_T oNNode);
-
-/*
-  Sets the pointer to the value of oNNode's file contents to
-  the parameter 'value'.
-  Returns nothing.
-*/
 void Node_setValue(Node_T oNNode, void* value);
 
 /* Returns the number of file children that oNParent has. */
@@ -91,9 +67,7 @@ size_t Node_getNumDirChildren(Node_T oNParent);
 
 /*
   Returns an int SUCCESS status and sets *poNResult to be the child
-  node of oNParent with identifier ulChildID, if one exists. 
-  isFile is used to determine whether to return a child
-  from oNParent's file or directory child DynArray.
+  node of oNParent with identifier ulChildID, if one exists.
   Otherwise, sets *poNResult to NULL and returns status:
   * NO_SUCH_PATH if ulChildID is not a valid child for oNParent
 */
@@ -116,6 +90,7 @@ int Node_compare(Node_T oNFirst, Node_T oNSecond);
 /*
   Returns a string representation for oNNode, or NULL if
   there is an allocation error.
+
   Allocates memory for the returned string, which is then owned by
   the caller!
 */

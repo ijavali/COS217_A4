@@ -1,3 +1,4 @@
+
 /*--------------------------------------------------------------------*/
 /* ft.c                                                               */
 /* Author: Ishaan Javali & Jack Zhang                                 */
@@ -6,6 +7,7 @@
 #include <assert.h>
 #include <stdlib.h>
 #include <string.h>
+
 #include "path.h"
 #include "dynarray.h"
 #include "ft.h"
@@ -24,6 +26,8 @@ static Node_T oNRoot;
 /* 3. a counter of the number of nodes in the hierarchy */
 static size_t ulCount;
 
+/*ALL of this is copied from dtGood.c*/
+
 /*
   Alternate version of strlen that uses pulAcc as an in-out parameter
   to accumulate a string length, rather than returning the length of
@@ -35,6 +39,7 @@ static void FT_strlenAccumulate(Node_T oNNode, size_t *pulAcc) {
    if(oNNode != NULL)
       *pulAcc += (Path_getStrLength(Node_getPath(oNNode)) + 1);
 }
+
 
 /*
   Alternate version of strcat that inverts the typical argument
@@ -49,7 +54,6 @@ static void FT_strcatAccumulate(Node_T oNNode, char *pcAcc) {
       strcat(pcAcc, "\n");
    }
 }
-
 /*
   Frees pcStr. This wrapper is used to match the requirements of the
   callback function pointer passed to DynArray_map. pvExtra is unused.
@@ -62,9 +66,7 @@ static void Path_freeString(char *pcStr, void *pvExtra) {
 
 /*
   Traverses the FT starting at the root as far as possible towards
-  absolute path oPPath. Uses isFile
-  to search in either a file or directory child array.
-  If able to traverse, returns an int SUCCESS
+  absolute path oPPath. If able to traverse, returns an int SUCCESS
   status and sets *poNFurthest to the furthest node reached (which may
   be only a prefix of oPPath, or even NULL if the root is NULL).
   Otherwise, sets *poNFurthest to NULL and returns with status:
@@ -79,7 +81,6 @@ static int FT_traversePath(Path_T oPPath, boolean isFile, Node_T *poNFurthest) {
    size_t ulDepth;
    size_t i;
    size_t ulChildID;
-   boolean origIsFile;
 
    assert(oPPath != NULL);
    assert(poNFurthest != NULL);
@@ -108,10 +109,10 @@ static int FT_traversePath(Path_T oPPath, boolean isFile, Node_T *poNFurthest) {
 
    oNCurr = oNRoot;
    ulDepth = Path_getDepth(oPPath);
-   origIsFile = isFile;
+   boolean origIsFile = isFile;
    for(i = 2; i <= ulDepth; i++) {
       if(origIsFile)
-         isFile = (boolean) (i == ulDepth);
+         isFile = (i == ulDepth);
       iStatus = Path_prefix(oPPath, i, &oPPrefix);
       if(iStatus != SUCCESS) {
          if(oPPrefix != NULL)
@@ -131,15 +132,25 @@ static int FT_traversePath(Path_T oPPath, boolean isFile, Node_T *poNFurthest) {
          oNCurr = oNChild;
       }
       else {
-         /* If the original node we were searching for is a file, see if we can go here. 
-            Reasoning: Imagine this. The path we're traversing is a/b/c/d/e/file.
-            What exists: a/b/c (file).
-            Originally, we would go to dir a, then dir b, dir c (nope)
-            so it stops at a/b.
-            We could've gone a/b/c (file) and then realized its impossible to insert anything else.
+         /* oNCurr doesn't have child with path oPPrefix:
+            this is as far as we can go */
+            /* If the original thing we were searching for is a file, see if we can go here. */
+            /* Added this to fix "Attempting to insert a child of a file is illegal" (line 130ish)
+            Reasoning: Imagine this. path we're traversing is a/b/c/d/e/file.
+               what exists: a/b/c (file)
+               originally, it would go to dir a, then dir b, dir c (nope)
+               so it stops at a/b.
+               we could've gone a/b/c (file) and then realized its impossible to insert anything else.
+
              */
+            /* if(oPPrefix != NULL){
+               printf("ASDFASDF\n");
+               printf( " %s\n", Path_getPathname(oPPrefix));
+               Path_free(oPPrefix);
+            } */
             if(origIsFile){
                isFile = TRUE;
+               /* iStatus = Path_prefix(oPPath, i, &oPPrefix); */
                if(iStatus != SUCCESS) {
                   *poNFurthest = NULL;
                   return iStatus;
@@ -156,10 +167,10 @@ static int FT_traversePath(Path_T oPPath, boolean isFile, Node_T *poNFurthest) {
                   }
                   oNCurr = oNChild;
                   /* If the only path forward is to enter
-                  into a file prematurely (in oPPath, 
-                  there are still more folders to go through),
+                  into a file prematurely (in the path variable we were passed 
+                  for traversing there are still more folders to go through)
                   then that means we can't traverse the rest of that path.
-                  That's an error; this is not a directory.
+                  that's an error. this is not a directory
                    */
                   if(i != ulDepth) {
                      Path_free(oPPrefix);
@@ -168,8 +179,6 @@ static int FT_traversePath(Path_T oPPath, boolean isFile, Node_T *poNFurthest) {
                   }
                }
             }
-            /*oNCurr doesn't have child with path oPPrefix:
-            this is as far as we can go.*/
             break;
       }
    }
@@ -178,10 +187,8 @@ static int FT_traversePath(Path_T oPPath, boolean isFile, Node_T *poNFurthest) {
    *poNFurthest = oNCurr;
    return SUCCESS;
 }
-
 /*
-  Traverses the FT to find a node with absolute path pcPath. Uses isFile
-  to search in either a file or directory child array. Returns a
+  Traverses the FT to find a node with absolute path pcPath. Returns a
   int SUCCESS status and sets *poNResult to be the node, if found.
   Otherwise, sets *poNResult to NULL and returns with status:
   * INITIALIZATION_ERROR if the FT is not in an initialized state
@@ -344,7 +351,14 @@ int FT_rmFile(const char *pcPath) {
    }
 
    iStatus = FT_findNode(pcPath, &oNFound, TRUE);
-   
+   /* if(iStatus == NO_SUCH_PATH){
+      if(oNFound != NULL)
+      iStatus = FT_findNode(pcPath, &oNFound, FALSE);
+      printf("NOS %d %d\n", iStatus, FT_containsDir(pcPath));
+      if(iStatus != SUCCESS)
+         return iStatus;
+      return NOT_A_FILE;
+   } */
    if(iStatus != SUCCESS)
        return iStatus;
    if(!(Node_isFile(oNFound)))
@@ -388,6 +402,7 @@ int FT_stat(const char *pcPath, boolean *pbIsFile, size_t *pulSize) {
     DynArray_T oDSubstrings;
     const char *pcStart = pcPath;
     const char *pcEnd = pcPath;
+    char *pcCopy;
     assert(pcPath != NULL);
     assert(pbIsFile != NULL);
     assert(pulSize != NULL);
@@ -396,6 +411,9 @@ int FT_stat(const char *pcPath, boolean *pbIsFile, size_t *pulSize) {
         return INITIALIZATION_ERROR;
     }
 
+    /* -------- */
+    /* FIXME: Doubtful about BAD_PATH and MEMORY_ERROR checking. unfreed memory */
+    /* Copied from path.c, Path_split() */
     if (*pcPath == '\0') {
         return BAD_PATH;
     }
@@ -427,13 +445,44 @@ int FT_stat(const char *pcPath, boolean *pbIsFile, size_t *pulSize) {
             return BAD_PATH;
         }
 
+       /*  pcCopy = calloc((size_t)(pcEnd - pcStart + 1), sizeof(char));
+        if (pcCopy == NULL) {
+            DynArray_map(oDSubstrings,
+                         (void (*)(void *, void *))Path_freeString, NULL);
+            DynArray_free(oDSubstrings);
+            return MEMORY_ERROR;
+        }
+
+        if (DynArray_add(oDSubstrings, pcCopy) == 0) {
+            DynArray_map(oDSubstrings,
+                         (void (*)(void *, void *))Path_freeString, NULL);
+            DynArray_free(oDSubstrings);
+            free(pcCopy);
+            return MEMORY_ERROR;
+        }
+ */
         while (pcStart != pcEnd) {
+            /* *pcCopy = *pcStart; */
+            /* pcCopy++; */
             pcStart++;
         }
 
         pcStart++;
     }
 
+    /* Copied from dtGood.c, FT_traversePath */
+    /* Path_prefix can return NO_SUCH_PATH and MEMORY_ERROR */
+    /* TODO commented out below to fix error */
+    /* iStatus = Path_prefix(pcPath, 1, &oPPrefix);
+    if(iStatus != SUCCESS) {
+        return iStatus;
+    }
+    if(Path_comparePath(Node_getPath(oNRoot), oPPrefix)) {
+        Path_free(oPPrefix);
+        return CONFLICTING_PATH;
+    } */
+    
+    /* -------- */
 
     iStatus = FT_findNode(pcPath, &oNFound, *pbIsFile);
     if(iStatus != SUCCESS){
@@ -554,6 +603,20 @@ int FT_insertDir(const char *pcPath) {
       return CONFLICTING_PATH;
    }
 
+   /* Originally */
+   /* ulDepth = Path_getDepth(oPPath);
+   if(oNCurr == NULL) 
+      ulIndex = 1;
+   else {
+      ulIndex = Path_getDepth(Node_getPath(oNCurr))+1;
+
+      if(ulIndex == ulDepth+1 && !Path_comparePath(oPPath,
+                                       Node_getPath(oNCurr))) {
+         Path_free(oPPath);
+         return ALREADY_IN_TREE;
+      }
+   } */
+   /* ================ */
    iStatus = Path_new(pcPath, &zPPath);
    if(iStatus != SUCCESS){
       Path_free(oPPath);
@@ -598,6 +661,8 @@ int FT_insertDir(const char *pcPath) {
          return ALREADY_IN_TREE;
       }
    }
+   
+   /* ================ */
 
    /* starting at oNCurr, build rest of the path one level at a time */
    while(ulIndex <= ulDepth) {
@@ -672,9 +737,10 @@ int FT_insertFile(const char *pcPath, void *pvContents, size_t ulLength) {
       Path_free(oPPath);
       return iStatus;
    }
-   /* Added check for depth
+   /* New modification. I added check for depth.
     because it should be valid to add "1child/2dir/3file"
-    to an empty tree. However, adding file "3file" to the root is wrong. 
+    to an empty tree. however, adding file "3file" to the root is wrong. 
+    Significance: now you can do insertfile("1root/2child/3gkid" as the very first insert and it works)
     */
    /*oNCurr is at the root*/
    if(oNCurr == NULL && ulCount == 0 && Path_getDepth(oPPath) == 1)
@@ -688,6 +754,9 @@ int FT_insertFile(const char *pcPath, void *pvContents, size_t ulLength) {
       Path_free(oPPath);
       return CONFLICTING_PATH;
    }
+
+/* DONE: You have to copy this over to insertDir */
+/* Commented out below and moved it below */
    /* ulDepth = Path_getDepth(oPPath); */
    iStatus = Path_new(pcPath, &zPPath);
    if(iStatus != SUCCESS){
@@ -753,8 +822,7 @@ int FT_insertFile(const char *pcPath, void *pvContents, size_t ulLength) {
       }
 
       /* insert the new node for this level */
-      /* Insert the directories first */
-      if(ulIndex < ulDepth) 
+      if(ulIndex < ulDepth) /* We have to insert the directories first */
          iStatus = Node_new(oPPrefix, oNCurr, &oNNewNode, FALSE, pvContents, ulLength);
       else
          iStatus = Node_new(oPPrefix, oNCurr, &oNNewNode, TRUE, pvContents, ulLength);

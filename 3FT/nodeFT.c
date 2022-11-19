@@ -151,7 +151,9 @@ int Node_new(Path_T oPPath, Node_T oNParent, Node_T *poNResult, boolean isFile, 
       }
    }
    psNew->oNParent = oNParent;
-
+   /* printf("%d", oNParent); */
+   /* if(oNParent != NULL)
+   printf( "|$| parent %s %d \n", Path_getPathname(Node_getPath(oNParent)), 1); */
 
    /* initialize the new node */
    psNew->fDChildren = DynArray_new(0);
@@ -201,17 +203,21 @@ int Node_new(Path_T oPPath, Node_T oNParent, Node_T *poNResult, boolean isFile, 
     }
    *poNResult = psNew;
 
-
+   /* printf( " |$| inserted %s %d ", Path_getPathname(Node_getPath(psNew)), 1); */
+  /*  printf( " |$| inserted %s %d ", Path_getPathname(psNew->oPPath), *(psNew->isFile)); */
+   /* printf("%d asdfasdfs", oNParent == NULL); */
 
    if(oNParent != NULL){
       for(ulIndex = 0; ulIndex < DynArray_getLength(oNParent->fDChildren); ulIndex++){
          Node_T temp;
          Node_getChild(oNParent, ulIndex, TRUE, &temp);
-        
+         /* if(temp != NULL)
+         printf(" -> %s %d | ", 
+         Path_getPathname(Node_getPath(temp)), *(temp->isFile)); */
       } 
-
+     /*  printf("done"); */
    }
-     
+      /* printf("\n"); */
    return SUCCESS;
 }
 
