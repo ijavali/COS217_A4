@@ -33,6 +33,3 @@ dynarray.o: dynarray.c
 
 path.o: path.c path.h dynarray.h
 	$(CC) -g -c path.c
-
-#	gcc217 ft.c path.c dynarray.c nodeFT.c ft_client.c -o ft
-

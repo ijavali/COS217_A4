@@ -1,6 +1,6 @@
 /*--------------------------------------------------------------------*/
 /* nodeDT.h                                                           */
-/* Author: Ishaan Javali, Jack Zhang, crediting Christopher Moretti                                        */
+/* Author: Ishaan Javali, Jack Zhang, crediting Christopher Moretti   */
 /*--------------------------------------------------------------------*/
 
 #ifndef NODE_INCLUDED

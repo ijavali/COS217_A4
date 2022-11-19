@@ -68,18 +68,6 @@ static int Node_compareString(const Node_T oNFirst,
    return Path_compareString(oNFirst->oPPath, pcSecond);
 }
 
-
-/*
-  Creates a new node with path oPPath and parent oNParent.  Returns an
-  int SUCCESS status and sets *poNResult to be the new node if
-  successful. Otherwise, sets *poNResult to NULL and returns status:
-  * MEMORY_ERROR if memory could not be allocated to complete request
-  * CONFLICTING_PATH if oNParent's path is not an ancestor of oPPath
-  * NO_SUCH_PATH if oPPath is of depth 0
-                 or oNParent's path is not oPPath's direct parent
-                 or oNParent is NULL but oPPath is not of depth 1
-  * ALREADY_IN_TREE if oNParent already has a child with this path
-*/
 int Node_new(Path_T oPPath, Node_T oNParent, Node_T *poNResult, boolean isFile, void* value, size_t contentLength) {
    struct node *psNew;
    Path_T oPParentPath = NULL;
@@ -151,9 +139,6 @@ int Node_new(Path_T oPPath, Node_T oNParent, Node_T *poNResult, boolean isFile, 
       }
    }
    psNew->oNParent = oNParent;
-   /* printf("%d", oNParent); */
-   /* if(oNParent != NULL)
-   printf( "|$| parent %s %d \n", Path_getPathname(Node_getPath(oNParent)), 1); */
 
    /* initialize the new node */
    psNew->fDChildren = DynArray_new(0);
@@ -203,21 +188,12 @@ int Node_new(Path_T oPPath, Node_T oNParent, Node_T *poNResult, boolean isFile, 
     }
    *poNResult = psNew;
 
-   /* printf( " |$| inserted %s %d ", Path_getPathname(Node_getPath(psNew)), 1); */
-  /*  printf( " |$| inserted %s %d ", Path_getPathname(psNew->oPPath), *(psNew->isFile)); */
-   /* printf("%d asdfasdfs", oNParent == NULL); */
-
    if(oNParent != NULL){
       for(ulIndex = 0; ulIndex < DynArray_getLength(oNParent->fDChildren); ulIndex++){
          Node_T temp;
          Node_getChild(oNParent, ulIndex, TRUE, &temp);
-         /* if(temp != NULL)
-         printf(" -> %s %d | ", 
-         Path_getPathname(Node_getPath(temp)), *(temp->isFile)); */
       } 
-     /*  printf("done"); */
    }
-      /* printf("\n"); */
    return SUCCESS;
 }
 
