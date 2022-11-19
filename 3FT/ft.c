@@ -1,3 +1,4 @@
+
 /*--------------------------------------------------------------------*/
 /* ft.c                                                               */
 /* Author: Ishaan Javali & Jack Zhang                                 */
@@ -79,8 +80,7 @@ static int FT_traversePath(Path_T oPPath, boolean isFile, Node_T *poNFurthest) {
    Node_T oNChild = NULL;
    size_t ulDepth;
    size_t i;
-   size_t ulChildID; 
-   boolean origIsFile;
+   size_t ulChildID;
 
    assert(oPPath != NULL);
    assert(poNFurthest != NULL);
@@ -107,10 +107,10 @@ static int FT_traversePath(Path_T oPPath, boolean isFile, Node_T *poNFurthest) {
 
    oNCurr = oNRoot;
    ulDepth = Path_getDepth(oPPath);
-   origIsFile = isFile;
+   boolean origIsFile = isFile;
    for(i = 2; i <= ulDepth; i++) {
       if(origIsFile)
-         isFile = (boolean) (i == ulDepth);
+         isFile = (i == ulDepth);
       iStatus = Path_prefix(oPPath, i, &oPPrefix);
       if(iStatus != SUCCESS) {
          *poNFurthest = NULL;
@@ -204,6 +204,8 @@ static int FT_findNode(const char *pcPath, Node_T *poNResult, boolean isFile) {
    iStatus = Path_new(pcPath, &oPPath);
    if(iStatus != SUCCESS) {
       *poNResult = NULL;
+      if(oPPath != NULL)
+         Path_free(oPPath);
       return iStatus;
    }
    iStatus = FT_traversePath(oPPath, isFile, &oNFound);
@@ -315,16 +317,6 @@ int FT_rmDir(const char *pcPath) {
       return NOT_A_DIRECTORY;
    }
    iStatus = FT_findNode(pcPath, &oNFound, FALSE);
-   /* printf("%d\n", iStatus);
-   if(iStatus == NO_SUCH_PATH){
-      if(oNFound != NULL)
-      printf(" removing %s %d", Path_getPathname(Node_getPath(oNFound)),
-         Node_isFile(oNFound));
-      iStatus = FT_findNode(pcPath, &oNFound, TRUE);
-      if(iStatus != SUCCESS)
-         return iStatus;
-      return NOT_A_DIRECTORY;
-   } */
 
    if(iStatus != SUCCESS)
        return iStatus;
@@ -442,7 +434,7 @@ int FT_stat(const char *pcPath, boolean *pbIsFile, size_t *pulSize) {
             return BAD_PATH;
         }
 
-        pcCopy = calloc((size_t)(pcEnd - pcStart + 1), sizeof(char));
+       /*  pcCopy = calloc((size_t)(pcEnd - pcStart + 1), sizeof(char));
         if (pcCopy == NULL) {
             DynArray_map(oDSubstrings,
                          (void (*)(void *, void *))Path_freeString, NULL);
@@ -457,10 +449,10 @@ int FT_stat(const char *pcPath, boolean *pbIsFile, size_t *pulSize) {
             free(pcCopy);
             return MEMORY_ERROR;
         }
-
+ */
         while (pcStart != pcEnd) {
-            *pcCopy = *pcStart;
-            pcCopy++;
+            /* *pcCopy = *pcStart; */
+            /* pcCopy++; */
             pcStart++;
         }
 
@@ -495,7 +487,9 @@ int FT_stat(const char *pcPath, boolean *pbIsFile, size_t *pulSize) {
     if(Node_isFile(oNFound)){
         *pulSize = Node_getUlLength(oNFound);
     }
-
+   DynArray_map(oDSubstrings,
+                         (void (*)(void *, void *))Path_freeString, NULL);
+   DynArray_free(oDSubstrings);
     return SUCCESS;
 }
 
@@ -668,6 +662,8 @@ int FT_insertDir(const char *pcPath) {
       iStatus = Path_prefix(oPPath, ulIndex, &oPPrefix);
       if(iStatus != SUCCESS) {
          Path_free(oPPath);
+         Path_free(zPPath);
+         Path_free(oPPrefix);
          if(oNFirstNew != NULL)
             (void) Node_free(oNFirstNew);
          return iStatus;
@@ -677,6 +673,7 @@ int FT_insertDir(const char *pcPath) {
       iStatus = Node_new(oPPrefix, oNCurr, &oNNewNode, FALSE, NULL, 0);
       if(iStatus != SUCCESS) {
          Path_free(oPPath);
+         Path_free(zPPath);
          Path_free(oPPrefix);
          if(oNFirstNew != NULL)
             (void) Node_free(oNFirstNew);
@@ -693,6 +690,7 @@ int FT_insertDir(const char *pcPath) {
    }
 
    Path_free(oPPath);
+   Path_free(zPPath);
    /* update FT state variables to reflect insertion */
    if(oNRoot == NULL)
       oNRoot = oNFirstNew;
@@ -806,6 +804,7 @@ int FT_insertFile(const char *pcPath, void *pvContents, size_t ulLength) {
       if(iStatus != SUCCESS) {
          Path_free(oPPath);
          Path_free(zPPath);
+         Path_free(oPPrefix);
          if(oNFirstNew != NULL)
             (void) Node_free(oNFirstNew);
          return iStatus;

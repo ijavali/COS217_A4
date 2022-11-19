@@ -77,6 +77,9 @@ and it felt like I had wasted time.
 Student 2: What is your assessment of the assignment? Was it helpful?
 Was it fun?
 
+The assignment was not fun. It isn't too clear what I was supposed to learn
+from this. I strongly do not recommend the continued usage of this assignment
+for future classes.
 
 
 ------------------------------------------------------------------------
@@ -189,10 +192,11 @@ the error manifests itself or is "noticed" by the client.
 What are your critiques of the given DT implementations, as
 specified in Step 2.5?
 
-The usage of global variables in dtGood is not effective encapsulation in modular coding, 
-since those global variables are accessed throughout multiple methods within dtGood.
-While functional, DT_traversePath and DT_insert appear cumbersome and bloated. However,
-due to internal comments, they are still clear in their purpose, and each step in their
+The usage of global variables in dtGood is not representative of
+effective encapsulation in modular coding, since those global variables are 
+accessed throughout multiple methods within dtGood. While functional, DT_traversePath 
+and DT_insert appear cumbersome and bloated. However, due to internal comments, 
+they are still clear in their purpose, and each step in their
 iterated loops is logical. bIsInitialized could be renamed to bTreeIsInitialized
 for clarity, and oNCurr and oNChild used in DT_traversePath are unclear variable names. ulCount could
 also be renamed to ulNumNodes, for further clarity, and oNFirstNew is named poorly in DT_insert.
@@ -208,9 +212,9 @@ also believe that the interface is relatively concise - all the .h functions
 and helper functions have a clear reason for existing. While DT_contains
 and DT_findNode seem a bit redundant in functionality, DT_findNode requires a dummy variable
 to pass in a found node, so only using DT_findNode when checking if a directory tree
-contains a node would not only be confusing in meaning, but would also clutter up a method
-with more dummy variables. After the implementation of our checkerDT.c, the error checking between 
-the client and our checker is sufficient.
+contains a node would not only be confusing in meaning, but would also clutter up a caller
+method with more dummy variables. After the implementation of our checkerDT.c, 
+the error checking between the client and our checker is sufficient.
 
 The code also establishes contracts in that it is commented very clearly, with
 each parameter of each method having a clear meaning. Both the dt and nodeDT

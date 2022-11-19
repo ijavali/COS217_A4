@@ -101,6 +101,8 @@ int Node_new(Path_T oPPath, Node_T oNParent, Node_T *poNResult, boolean isFile, 
    iStatus = Path_dup(oPPath, &oPNewPath);
    if(iStatus != SUCCESS) {
       free(psNew);
+      if(oPNewPath != NULL)
+         Path_free(oPNewPath);
       *poNResult = NULL;
       return iStatus;
    }
@@ -176,6 +178,8 @@ int Node_new(Path_T oPPath, Node_T oNParent, Node_T *poNResult, boolean isFile, 
       iStatus = Node_addChild(oNParent, psNew, isFile, ulIndex);
       if(iStatus != SUCCESS) {
          Path_free(psNew->oPPath);
+         DynArray_free(psNew->fDChildren);
+         DynArray_free(psNew->dDChildren);
          free(psNew);
          *poNResult = NULL;
          return iStatus;
