@@ -131,13 +131,6 @@ static int FT_traversePath(Path_T oPPath, boolean isFile, Node_T *poNFurthest) {
          oNCurr = oNChild;
       }
       else {
-         /* If the original node we were searching for is a file, see if we can go here. 
-            Reasoning: Imagine this. The path we're traversing is a/b/c/d/e/file.
-            What exists: a/b/c (file).
-            Originally, we would go to dir a, then dir b, dir c (nope)
-            so it stops at a/b.
-            We could've gone a/b/c (file) and then realized its impossible to insert anything else.
-             */
             if(origIsFile){
                isFile = TRUE;
                if(iStatus != SUCCESS) {
@@ -158,8 +151,8 @@ static int FT_traversePath(Path_T oPPath, boolean isFile, Node_T *poNFurthest) {
                   /* If the only path forward is to enter
                   into a file prematurely (in oPPath, 
                   there are still more folders to go through),
-                  then that means we can't traverse the rest of that path.
-                  That's an error; this is not a directory.
+                  then that means the rest of the path can't be traversed
+                  as this is not a directory.
                    */
                   if(i != ulDepth) {
                      Path_free(oPPrefix);
@@ -367,21 +360,6 @@ int FT_init(void) {
     return SUCCESS;
 }
 
-/*
-  Returns SUCCESS if pcPath exists in the hierarchy,
-  Otherwise, returns:
-  * INITIALIZATION_ERROR if the FT is not in an initialized state
-  * BAD_PATH if pcPath does not represent a well-formatted path
-  * CONFLICTING_PATH if the root's path is not a prefix of pcPath
-  * NO_SUCH_PATH if absolute path pcPath does not exist in the FT
-  * MEMORY_ERROR if memory could not be allocated to complete request
-  When returning SUCCESS,
-  if path is a directory: sets *pbIsFile to FALSE, *pulSize unchanged
-  if path is a file: sets *pbIsFile to TRUE, and
-                     sets *pulSize to the length of file's contents
-  When returning another status, *pbIsFile and *pulSize are unchanged.
-*/
-
 int FT_stat(const char *pcPath, boolean *pbIsFile, size_t *pulSize) {
     int iStatus;
     Node_T oNFound = NULL;
@@ -472,12 +450,6 @@ void *FT_getFileContents(const char *pcPath){
     return NULL;
 }
 
-/*
-  Replaces current contents of the file with absolute path pcPath with
-  the parameter pvNewContents of size ulNewLength bytes.
-  Returns the old contents if successful. (Note: contents may be NULL.)
-  Returns NULL if unable to complete the request for any reason.
-*/
 void *FT_replaceFileContents(const char *pcPath, void *pvNewContents,
                              size_t ulNewLength) {
     int iStatus;
@@ -672,10 +644,7 @@ int FT_insertFile(const char *pcPath, void *pvContents, size_t ulLength) {
       Path_free(oPPath);
       return iStatus;
    }
-   /* Added check for depth
-    because it should be valid to add "1child/2dir/3file"
-    to an empty tree. However, adding file "3file" to the root is wrong. 
-    */
+  
    /*oNCurr is at the root*/
    if(oNCurr == NULL && ulCount == 0 && Path_getDepth(oPPath) == 1)
    {
