@@ -93,6 +93,8 @@ static int FT_traversePath(Path_T oPPath, boolean isFile, Node_T *poNFurthest) {
 
    iStatus = Path_prefix(oPPath, 1, &oPPrefix);
    if(iStatus != SUCCESS) {
+      if(oPPrefix != NULL)
+         Path_free(oPPrefix);
       *poNFurthest = NULL;
       return iStatus;
    }
@@ -113,6 +115,8 @@ static int FT_traversePath(Path_T oPPath, boolean isFile, Node_T *poNFurthest) {
          isFile = (i == ulDepth);
       iStatus = Path_prefix(oPPath, i, &oPPrefix);
       if(iStatus != SUCCESS) {
+         if(oPPrefix != NULL)
+         Path_free(oPPrefix);
          *poNFurthest = NULL;
          return iStatus;
       }
@@ -139,15 +143,21 @@ static int FT_traversePath(Path_T oPPath, boolean isFile, Node_T *poNFurthest) {
                we could've gone a/b/c (file) and then realized its impossible to insert anything else.
 
              */
+            /* if(oPPrefix != NULL){
+               printf("ASDFASDF\n");
+               printf( " %s\n", Path_getPathname(oPPrefix));
+               Path_free(oPPrefix);
+            } */
             if(origIsFile){
                isFile = TRUE;
-               iStatus = Path_prefix(oPPath, i, &oPPrefix);
+               /* iStatus = Path_prefix(oPPath, i, &oPPrefix); */
                if(iStatus != SUCCESS) {
                   *poNFurthest = NULL;
                   return iStatus;
                }
                if(Node_hasChild(oNCurr, oPPrefix, isFile, &ulChildID)) {
                   /* go to that child and continue with next prefix */
+                  if(oPPrefix != NULL)
                   Path_free(oPPrefix);
                   oPPrefix = NULL;
                   iStatus = Node_getChild(oNCurr, ulChildID, isFile, &oNChild);
@@ -318,10 +328,12 @@ int FT_rmDir(const char *pcPath) {
    }
    iStatus = FT_findNode(pcPath, &oNFound, FALSE);
 
-   if(iStatus != SUCCESS)
+   if(iStatus != SUCCESS){
        return iStatus;
+   } 
    if(Node_isFile(oNFound))
        return NOT_A_DIRECTORY;
+   printf(" Rm %s\n", Path_getPathname(Node_getPath(oNFound)));
    ulCount -= Node_free(oNFound);
    if(ulCount == 0)
       oNRoot = NULL;
