@@ -224,44 +224,44 @@ express your disagreement after each warning. If there are no
 warnings, then write "None."
 
   ft.c: line 57: medium priority:
-  Function names should be prefixed with module names;
-  function name Path_freeString does not match module name ft.c
+   Function names should be prefixed with module names;
+   function name Path_freeString does not match module name ft.c
 
   Since we cannot edit path.c and path.h, we agreed that it would
   be optimal to include this method outside of those modules as a 
   static method, so long as we gave it the proper method header,
   beginning with Path_.
-  
-  ft.c: line 57: medium priority:
-  Do you want to validate 'pcStr' through an assert?
 
-  ft.c: line 57: medium priority:
-  Do you want to validate 'pvExtra' through an assert?
+   ft.c: line 57: medium priority:
+   Do you want to validate 'pcStr' through an assert?
 
-  ft.c: line 479: medium priority:
-  Do you want to validate 'pvNewContents' through an assert?
+   ft.c: line 57: medium priority:
+   Do you want to validate 'pvExtra' through an assert?
 
-  ft.c: line 645: medium priority:
-  Do you want to validate 'pvContents' through an assert?
+   ft.c: line 454: medium priority:
+   Do you want to validate 'pvNewContents' through an assert?
 
-  For the assert warnings, each of these parameteres are allowed to
-  be NULL.
+   ft.c: line 620: medium priority:
+   Do you want to validate 'pvContents' through an assert?
 
-  ft.c: line 72: low priority:
-  This function definition probably needs more local comments
+    For the assert warnings, each of these parameters are allowed to
+    be NULL.
+    
+   ft.c: line 74: low priority:
+   This function definition probably needs more local comments
 
-  ft.c: line 191: low priority:
-  This function definition probably needs more local comments
+   ft.c: line 187: low priority:
+   This function definition probably needs more local comments
 
-  ft.c: line 382: low priority:
-  This function definition probably needs more local comments
+   ft.c: line 363: low priority:
+   This function definition probably needs more local comments
 
-  ft.c: line 521: low priority:
-  This function definition probably needs more local comments
-
-  For each of these methods, the large chunk of space
-  that doesn't have associated comments is used for iStatus checks,
-  and each check is abundantly clear. 
+   ft.c: line 496: low priority:
+   This function definition probably needs more local comments
+   
+   For each of these methods, the large chunk of space
+   that doesn't have associated comments is used for iStatus checks,
+   and each check is abundantly clear in meaning. 
 
 ------------------------------------------------------------------------
 For each of the five faulty BDT implementations required by Step
