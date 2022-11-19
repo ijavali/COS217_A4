@@ -248,7 +248,6 @@ size_t Node_free(Node_T oNNode) {
    size_t ulCount = 0;
 
    assert(oNNode != NULL);
-
    /* remove this file from parent's list */
    if(*(oNNode->isFile)){
       if(oNNode->oNParent != NULL) {
