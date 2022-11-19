@@ -52,10 +52,34 @@ Path_T Node_getPath(Node_T oNNode);
 boolean Node_hasChild(Node_T oNParent, Path_T oPPath, boolean isFile,
                          size_t *pulChildID);
 
+/*
+  Returns TRUE if oNNode is a file, FALSE if it is a directory
+*/
 boolean Node_isFile(Node_T oNNode);
+
+/*
+  Returns the size of file contents in bytes if oNNode is a file;
+  else returns 0.
+*/
 size_t Node_getUlLength(Node_T oNNode);
+
+/*
+  Sets the size of oNNode's file contents in bytes to ulLength.
+  Returns nothing.
+*/
 void Node_setUlLength(Node_T oNNode, size_t ulLength);
+
+/*
+  Returns a pointer to the value of oNNode's file contents.
+  Returns NULL if not a file.
+*/
 void* Node_getValue(Node_T oNNode);
+
+/*
+  Sets the pointer to the value of oNNode's file contents to
+  the parameter 'value'.
+  Returns nothing.
+*/
 void Node_setValue(Node_T oNNode, void* value);
 
 /* Returns the number of file children that oNParent has. */
