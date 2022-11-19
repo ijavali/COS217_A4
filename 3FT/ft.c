@@ -333,7 +333,6 @@ int FT_rmDir(const char *pcPath) {
    } 
    if(Node_isFile(oNFound))
        return NOT_A_DIRECTORY;
-   printf(" Rm %s\n", Path_getPathname(Node_getPath(oNFound)));
    ulCount -= Node_free(oNFound);
    if(ulCount == 0)
       oNRoot = NULL;
