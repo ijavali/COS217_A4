@@ -227,10 +227,10 @@ warnings, then write "None."
    Function names should be prefixed with module names;
    function name Path_freeString does not match module name ft.c
 
-  Since we cannot edit path.c and path.h, we agreed that it would
-  be optimal to include this method outside of those modules as a 
-  static method, so long as we gave it the proper method header,
-  beginning with Path_.
+  path.c already has a static method called Path_freeString, which
+  we cannot access in ft.c. Therefore, we created our own, and since 
+  it is named with a correct module header (Path_), the meaning of the
+  method is clear.
 
    ft.c: line 57: medium priority:
    Do you want to validate 'pcStr' through an assert?
