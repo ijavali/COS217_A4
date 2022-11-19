@@ -77,9 +77,9 @@ and it felt like I had wasted time.
 Student 2: What is your assessment of the assignment? Was it helpful?
 Was it fun?
 
-The assignment was not fun. It isn't too clear what I was supposed to learn
-from this. I strongly do not recommend the continued usage of this assignment
-for future classes.
+The assignment was not fun, but I felt that it improved my overall
+understanding of pointers, memory allocation, and management in C.
+I also finally learned how to use gdb. The assignment was very tedious.
 
 
 ------------------------------------------------------------------------
@@ -87,7 +87,7 @@ for future classes.
 will help your grader to grade it in the most favorable light? In
 particular, what bugs are in your submission?
 
-
+No bugs. 
 
 ------------------------------------------------------------------------
 What warnings does splint generate for Part 2's checker, and what are
