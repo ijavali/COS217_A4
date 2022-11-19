@@ -159,56 +159,56 @@ warnings, then write "None."
 
   Splint 3.1.2 --- 20 Aug 2022
 
-  ft.c: (in function FT_traversePath)
-  ft.c:124:42: Variable ulChildID used before definition
-    An rvalue is used that may not be initialized to a value on some execution
-    path. (Use -usedef to inhibit warning)
-  ft.c:150:51: Variable ulChildID used before definition
-  path.h:24:5: Function Path_new declared but not defined
-    A function or variable is declared, but not defined in any source code file.
-    (Use -declundef to inhibit warning)
-  path.h:33:5: Function Path_dup declared but not defined
-  path.h:44:5: Function Path_prefix declared but not defined
-  path.h:47:6: Function Path_free declared but not defined
-  path.h:50:13: Function Path_getPathname declared but not defined
-  path.h:56:8: Function Path_getStrLength declared but not defined
-  path.h:63:5: Function Path_comparePath declared but not defined
-  path.h:70:5: Function Path_compareString declared but not defined
-  path.h:77:8: Function Path_getDepth declared but not defined
-  path.h:86:8: Function Path_getSharedPrefixDepth declared but not defined
-  path.h:94:13: Function Path_getComponent declared but not defined
-  dynarray.h:21:12: Function DynArray_new declared but not defined
-  dynarray.h:27:6: Function DynArray_free declared but not defined
-  dynarray.h:33:8: Function DynArray_getLength declared but not defined
-  dynarray.h:39:7: Function DynArray_get declared but not defined
-  dynarray.h:46:7: Function DynArray_set declared but not defined
-  dynarray.h:55:5: Function DynArray_add declared but not defined
-  dynarray.h:63:5: Function DynArray_addAt declared but not defined
-  dynarray.h:70:7: Function DynArray_removeAt declared but not defined
-  dynarray.h:78:6: Function DynArray_toArray declared but not defined
-  dynarray.h:87:26: Function DynArray_map declared but not defined
-  dynarray.h:98:26: Function DynArray_sort declared but not defined
-  dynarray.h:113:27: Function DynArray_search declared but not defined
-  dynarray.h:129:28: Function DynArray_bsearch declared but not defined
-  nodeFT.h:32:5: Function Node_new declared but not defined
-  nodeFT.h:39:8: Function Node_free declared but not defined
-  nodeFT.h:42:8: Function Node_getPath declared but not defined
-  nodeFT.h:53:9: Function Node_hasChild declared but not defined
-  nodeFT.h:59:9: Function Node_isFile declared but not defined
-  nodeFT.h:65:8: Function Node_getUlLength declared but not defined
-  nodeFT.h:71:6: Function Node_setUlLength declared but not defined
-  nodeFT.h:77:7: Function Node_getValue declared but not defined
-  nodeFT.h:84:6: Function Node_setValue declared but not defined
-  nodeFT.h:87:8: Function Node_getNumFileChildren declared but not defined
-  nodeFT.h:90:8: Function Node_getNumDirChildren declared but not defined
-  nodeFT.h:100:5: Function Node_getChild declared but not defined
-  nodeFT.h:107:8: Function Node_getParent declared but not defined
-  nodeFT.h:114:5: Function Node_compare declared but not defined
-  nodeFT.h:122:7: Function Node_toString declared but not defined
-  
-  Finished checking --- 41 code warnings
+ft.c: (in function FT_traversePath)
+ft.c:126:42: Variable ulChildID used before definition
+  An rvalue is used that may not be initialized to a value on some execution
+  path. (Use -usedef to inhibit warning)
+ft.c:145:51: Variable ulChildID used before definition
+path.h:24:5: Function Path_new declared but not defined
+  A function or variable is declared, but not defined in any source code file.
+  (Use -declundef to inhibit warning)
+path.h:33:5: Function Path_dup declared but not defined
+path.h:44:5: Function Path_prefix declared but not defined
+path.h:47:6: Function Path_free declared but not defined
+path.h:50:13: Function Path_getPathname declared but not defined
+path.h:56:8: Function Path_getStrLength declared but not defined
+path.h:63:5: Function Path_comparePath declared but not defined
+path.h:70:5: Function Path_compareString declared but not defined
+path.h:77:8: Function Path_getDepth declared but not defined
+path.h:86:8: Function Path_getSharedPrefixDepth declared but not defined
+path.h:94:13: Function Path_getComponent declared but not defined
+dynarray.h:21:12: Function DynArray_new declared but not defined
+dynarray.h:27:6: Function DynArray_free declared but not defined
+dynarray.h:33:8: Function DynArray_getLength declared but not defined
+dynarray.h:39:7: Function DynArray_get declared but not defined
+dynarray.h:46:7: Function DynArray_set declared but not defined
+dynarray.h:55:5: Function DynArray_add declared but not defined
+dynarray.h:63:5: Function DynArray_addAt declared but not defined
+dynarray.h:70:7: Function DynArray_removeAt declared but not defined
+dynarray.h:78:6: Function DynArray_toArray declared but not defined
+dynarray.h:87:26: Function DynArray_map declared but not defined
+dynarray.h:98:26: Function DynArray_sort declared but not defined
+dynarray.h:113:27: Function DynArray_search declared but not defined
+dynarray.h:129:28: Function DynArray_bsearch declared but not defined
+nodeFT.h:32:5: Function Node_new declared but not defined
+nodeFT.h:39:8: Function Node_free declared but not defined
+nodeFT.h:42:8: Function Node_getPath declared but not defined
+nodeFT.h:53:9: Function Node_hasChild declared but not defined
+nodeFT.h:59:9: Function Node_isFile declared but not defined
+nodeFT.h:65:8: Function Node_getUlLength declared but not defined
+nodeFT.h:71:6: Function Node_setUlLength declared but not defined
+nodeFT.h:77:7: Function Node_getValue declared but not defined
+nodeFT.h:84:6: Function Node_setValue declared but not defined
+nodeFT.h:87:8: Function Node_getNumFileChildren declared but not defined
+nodeFT.h:90:8: Function Node_getNumDirChildren declared but not defined
+nodeFT.h:100:5: Function Node_getChild declared but not defined
+nodeFT.h:107:8: Function Node_getParent declared but not defined
+nodeFT.h:114:5: Function Node_compare declared but not defined
+nodeFT.h:122:7: Function Node_toString declared but not defined
 
-  For lines 124 and 150, ulChildID is definitely defined because 
+Finished checking --- 41 code warnings
+
+  For lines 126 and 145, ulChildID is definitely defined because 
   the if statement is entered, meaning that hasChild worked and a
    value has been passed into &ulChildID.
 
