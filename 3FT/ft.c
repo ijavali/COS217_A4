@@ -77,6 +77,7 @@ static int FT_traversePath(Path_T oPPath, boolean isFile, Node_T *poNFurthest) {
    size_t ulDepth;
    size_t i;
    size_t ulChildID;
+   boolean origIsFile;
 
    assert(oPPath != NULL);
    assert(poNFurthest != NULL);
@@ -105,7 +106,7 @@ static int FT_traversePath(Path_T oPPath, boolean isFile, Node_T *poNFurthest) {
 
    oNCurr = oNRoot;
    ulDepth = Path_getDepth(oPPath);
-   boolean origIsFile = isFile;
+   origIsFile = isFile;
    for(i = 2; i <= ulDepth; i++) {
       if(origIsFile)
          isFile = (i == ulDepth);
@@ -384,7 +385,6 @@ int FT_stat(const char *pcPath, boolean *pbIsFile, size_t *pulSize) {
     DynArray_T oDSubstrings;
     const char *pcStart = pcPath;
     const char *pcEnd = pcPath;
-    char *pcCopy;
     assert(pcPath != NULL);
     assert(pbIsFile != NULL);
     assert(pulSize != NULL);
